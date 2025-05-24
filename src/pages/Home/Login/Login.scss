@@ -1,0 +1,16 @@
+.background {
+    position: fixed; /* 화면 기준으로 고정 */
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    z-index: 2;
+}
+
+.login {
+    width: 200px;
+    height: 300px;
+}
