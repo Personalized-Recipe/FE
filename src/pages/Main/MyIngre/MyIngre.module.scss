@@ -1,0 +1,128 @@
+.container {
+    display: flex;
+    background:white;
+    border: 1px solid rgb(196, 196, 196);
+    border-radius: 20px;
+    width: 50vw;
+    height: 75vh;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.inputContainer {
+    display: flex;
+    width: 38vw;
+    height: 5vh;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.input {
+    display: flex;
+    width: 70%;
+    height: 100%;
+    border-radius: 10px;
+    border: 1px solid rgb(0, 0, 0);
+    padding-left: 10px;
+}
+
+.searchButton {
+    background-color:#F78F10;
+    width: 15%;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+}
+
+.listContainer {
+    position: relative;
+    display: flex;
+    width: 35vw;
+    height: 50vh;
+    border-radius: 20px;
+    overflow: hidden;
+    flex-direction: row;
+    overflow-y: scroll;
+    background: none;
+    border: 1px solid rgb(0, 0, 0);
+}
+
+.ingreInfo {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    background: white;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+
+}
+
+.infoContainer {
+    display: flex;
+    width: 250px;
+    height: 250px;
+    background-color: none;
+    border-radius: 20px;
+    border: 1px solid rgb(0, 0, 0);
+    overflow: hidden;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.ingreName, .ingreAmount, .ingreUnit{
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background-color: #F78F10;
+    text-indent: 5px;
+}
+
+.ingreName:focus,
+.ingreAmount:focus,
+.ingreUnit:focus {
+    outline: 2px solid #6c10f7;
+    border: 2px solid #6c10f7;
+    box-shadow: 0 0 4px #6c10f7;
+}
+
+.addButton {
+    background-color:#F78F10;
+    width: 40%;
+    height: 35px;
+    border-radius: 10px;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+.itemContainer {
+    display: flex;
+    flex: 1;
+    width: 60%;
+    height: 100%;
+    background-color: rgb(246, 246, 246);
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+.Item {
+    display: flex;
+    width: 260px;
+    height: 60px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 20px 10px 0;
+    flex-shrink: 0;
+}

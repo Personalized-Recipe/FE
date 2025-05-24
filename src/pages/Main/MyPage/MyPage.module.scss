@@ -1,0 +1,189 @@
+.MyPage {
+    display: flex;
+    background:white;
+    border: 1px solid rgb(196, 196, 196);
+    border-radius: 20px;
+    width: 50vw;
+    height: 75vh;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    gap: 60px;
+}
+
+.MyPage__header {
+    background: none;
+    display: flex;
+    margin-left: 100px;
+    width: 100%;
+    gap: 20px;
+    align-items: center;
+}
+
+.MyPage__content {
+    border-top: #9f9f9f 1px solid;
+    background: none;
+    flex: 1;
+    display: flex;
+    width: 100%;
+    max-height: 100%;
+    overflow: auto;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 0;
+}
+
+.user__age, .user__gender, .user__isPregnant, .user__health, .user__allergy, .user__prefer, .user__dislike {
+    background: none;
+}
+
+.user__input {
+    background: none;
+    display: flex;
+    height: 30px;
+    width: 60%;
+
+    input {
+        height: 100%;
+        flex: 1;
+        border-radius: 10px;
+        border: 1px solid #000000;
+        text-indent: 10px;
+    }
+
+}
+
+.editButton {
+    background: #000000;
+    display: flex;
+    width: 30%;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid #000000;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 20px 0;
+    color: white;
+}
+
+.editButton:hover {
+  background: #ff9800;
+  color: #fff;
+  box-shadow: 0 0 2px #ff9800;
+}
+
+.alertBox {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,0.4); // 반투명 배경
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > div {
+        background: #fff;
+        border-radius: 12px;
+        border-bottom: 1px solid #000000;
+        padding: 32px 40px;
+        min-width: 240px;
+        min-height: 100px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        text-align: center;
+        font-size: 18px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column
+    }
+
+    & > div > button {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: none;
+        color: #000;
+        border: #000000 1px solid;
+        border-radius: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    & > div > button:hover {
+        background: #ff9800;
+        color: #fff;
+        box-shadow: 0 0 2px #ff9800;
+    }
+}
+
+// -------------- 공통 --------------
+.button {
+    border:#000000 1px solid;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.button:hover {
+    background: #ff9800;
+    color: #fff;
+    box-shadow: 0 0 2px #ff9800;
+}
+
+.button.active {
+    background: #ff9800;
+    color: #fff;
+    box-shadow: 0 0 2px #ff9800;
+}
+
+.checkButton {
+    border: #000000 1px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.checkButton:hover {
+    background: #ff9800;
+    color: #fff;
+    box-shadow: 0 0 2px #ff9800;
+}
+
+.infoBox {
+    display: flex;
+    width: 100%;
+    margin: 20px;
+    border: 1px solid #000000;
+    border-radius: 12px;
+    padding: 50px 20px 30px;
+
+}
+.labeledBox {
+    position: relative;
+    display: flex;
+    width: 380px;
+    margin: 30px;
+    border: 1px solid #000000;
+    border-radius: 12px;
+    padding: 24px 16px 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.boxLabel {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: white;
+    padding: 0 10px;
+    font-size: 16px;
+    color: #000000;
+    font-weight: bold;
+    z-index: 1;
+}

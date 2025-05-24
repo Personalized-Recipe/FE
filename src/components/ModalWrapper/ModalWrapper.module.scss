@@ -1,0 +1,36 @@
+.Overlay {
+    position: fixed;
+    background: rgba(0,0,0,0.5);
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+
+.Modal{
+  position: relative;
+  display: flex;
+  background: none;
+  padding: 0 0 30px;
+  border-radius: 8px;
+  min-width: 550px;
+  max-height: 600px;
+  margin-bottom: 60px;
+}
+
+.modalClose {
+    position: absolute;
+    width: 60px;
+    top: 20px;
+    right: 20px;
+    background-color: #7700ff;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    z-index: 101;
+}
