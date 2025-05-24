@@ -7,6 +7,7 @@ import MyPage from "./pages/Main/MyPage/MyPage";
 import Recipe from "./pages/Main/Recipe/Recipe";
 import Logout from "./pages/Main/Logout/Logout";
 import ModalWrapper from "./components/ModalWrapper/ModalWrapper";
+import "./App.scss";
 
 function App() {
   const location = useLocation();
@@ -28,7 +29,7 @@ function App() {
   console.log("location.pathname:", location.pathname);
 
   return (
-    <> 
+    <div className="App"> 
       <Routes location={background || location}>
           <Route path="/" element={<Home />} />
           <Route path="/main" element={<Main />} />
@@ -80,7 +81,7 @@ function App() {
         </Routes>
       )}
       
-    </>
+    </div>
   );
 }
 

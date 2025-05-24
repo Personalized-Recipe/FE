@@ -1,0 +1,23 @@
+.logout {
+    display: flex;
+    background:rgb(255, 100, 100);
+    border: 1px solid rgb(196, 196, 196);
+    border-radius: 20px;
+    width: 50vw;
+    height: 75vh;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.logout__buttons {
+    background-color: aqua;
+}
+
+.logout__confirm {
+    background-color: greenyellow;
+}
+
+.logout__cancel {
+    background-color: rgb(52, 255, 48);
+}

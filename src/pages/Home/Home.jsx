@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
-import Login from './pages/Home/Login/Login.jsx';
+import Login from './Login/Login.jsx';
 import './Home.scss';
 
 function Home() {
