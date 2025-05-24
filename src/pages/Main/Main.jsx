@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import ChatWindow from "../../components/Chatwindow/Chatwindow";
 
-function Home() {
+function Main() {
     const [ingredients, setIngredients] = useState([]);
     const [showIngredient, setShowIngredient] = useState(false);
 
@@ -23,11 +23,11 @@ function Home() {
     console.log(" showIngredient:", showIngredient);
 
     return (
-        <div className={styles.home}>
+        <div className={styles.main}>
             <Navbar />
-            <div className={styles.home__content}>
+            <div className={styles.main__content}>
                 <Sidebar showIngredient={showIngredient} ingredients={ingredients} />
-                <div className={styles.home__chat}>
+                <div className={styles.main__chat}>
                     <ChatWindow handleIngredientClick={handleIngredientClick} />    
                 </div>
             </div>
@@ -36,4 +36,4 @@ function Home() {
     )
 }
 
-export default Home;
+export default Main;

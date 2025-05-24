@@ -5,7 +5,10 @@
     height: 60px;
     background: none;
     border-bottom: 1px solid rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0 6px 0 #0000001F;
     flex-shrink: 0;
+    z-index: 1;
 }
 
 .navbar__logo {
@@ -42,4 +45,21 @@ button {
     width: 90px;
     height: 30px;
     cursor: pointer;   
+}
+
+.sign_up {
+    position: absolute;
+    width: 100px;
+    height: 27px;
+    right: 45px;
+    border-radius: 6px;
+    border-style: none;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* 로그인 후 상단바 */
+.login_nav {
+    position: absolute;
+    display: none;
 }

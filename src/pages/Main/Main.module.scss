@@ -1,4 +1,4 @@
-.home {
+.main {
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -6,7 +6,7 @@
     flex-direction: column;
 }
 
-.home__content {
+.main__content {
     margin-top: 60px;
     background: none;
     display: flex;
@@ -15,7 +15,7 @@
     overflow: hidden;
 }
 
-.home__chat {
+.main__chat {
     display: flex;
     flex: 1;
     flex-direction: column;

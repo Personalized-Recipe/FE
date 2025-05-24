@@ -1,6 +1,7 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import Home from "./pages/Main/Main";
+import Main from "./pages/Main/Main";
+import Home from "./pages/Home/Home";
 import MyIngre from "./pages/Main/MyIngre/MyIngre";
 import MyPage from "./pages/Main/MyPage/MyPage";
 import Recipe from "./pages/Main/Recipe/Recipe";
@@ -28,9 +29,10 @@ function App() {
 
   return (
     <> 
-        <Routes location={background || location}>
-            <Route path="/" element={<Home />} />
-        </Routes>
+      <Routes location={background || location}>
+          <Route path="/" element={<Home />} />
+          <Route path="/main" element={<Main />} />
+      </Routes>
 
       {/* 모달 오버레이 조건 */}
       {background && (
@@ -77,6 +79,7 @@ function App() {
           } />
         </Routes>
       )}
+      
     </>
   );
 }
