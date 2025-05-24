@@ -1,0 +1,24 @@
+.main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.main__content {
+    margin-top: 60px;
+    background: none;
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+.main__chat {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background: none;
+    min-height: 0;
+}

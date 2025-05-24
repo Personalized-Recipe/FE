@@ -1,0 +1,30 @@
+.message {
+    width: 100px;
+    height: 40px;
+    display: flex;
+    margin: 100px 100px;
+}
+
+.message__content {
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    max-width: 70%;
+    word-break: break-word;
+}
+
+.user {
+    background: #1183ff;
+    text-align: right;
+    color: white;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: auto;
+}
+
+.bot {
+    background: #42ff8d;
+    text-align: left;
+    color: black;
+}

@@ -1,8 +1,21 @@
+import React, { useState } from 'react';
+import Navbar from '../../components/Navbar/Navbar';
+import Login from './Login/Login.jsx';
 import './Home.scss';
 
 function Home() {
+    const [showLogin, setShowLogin] = useState(false);
+
+    const handleLoginClick = () => {
+    setShowLogin(true);
+    }
+    const handleCloseLogin = () => {
+    setShowLogin(false);
+    }
+
   return (
     <div className="Home">
+        <Navbar onClickLogin={handleLoginClick} />
         <div className="info">
             <h1 className="cong" style={{ fontSize: "2.5rem" }}><strong style={{ fontSize: "3rem" }}>{'\u00a0'}만개의 레시피{'\u00a0'}</strong>에 오신걸 환영합니다!</h1>
             <p className="sup">저희는 차별화된 서비스를 제공합니다.</p>
@@ -24,6 +37,7 @@ function Home() {
                 <span>고객센터</span>
             </div>
         </div>
+        {showLogin && <Login onClose={handleCloseLogin}/>}
     </div>
   );     
 }
