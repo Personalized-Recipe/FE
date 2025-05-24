@@ -1,0 +1,129 @@
+.Home {
+    background-color: black;
+    top: 60px;
+    position: relative;
+    height: 1180px;
+    width: 100%;
+}
+
+.info {
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    height: 700px;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+
+.cong {
+    position: absolute;
+    top: 70px;
+    font-weight: 900;
+}
+
+.sup {
+    position: absolute;
+    font-size: 20px;
+    top: 145px;
+}
+
+  .personality,
+  .ingredient,
+  .replace {
+    background-color: #f0f0f0;
+    height: 300px;
+    width: 230px;
+    padding: 20px;
+    margin: 20px;
+    margin-top: 250px;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .container:hover .personality,
+  .container:hover .ingredient,
+  .container:hover .replace {
+    transform: translateX(10px);
+  }
+  
+  .personality:hover {
+    transform: scale(1.2);
+  }
+  
+  .ingredient:hover {
+    transform: scale(1.2);
+  }
+  
+  .replace:hover {
+    transform: scale(1.2);
+  }
+  
+  
+
+.to_exp {
+    background-color: rgb(149, 149, 149);
+    top: 700px;
+    position: absolute;
+    height: 350px;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+
+.title {
+    top: 60px;
+    position: absolute;
+    font-size: 38px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+  
+.subtitle {
+    top: 120px;
+    position: absolute;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.action-button {
+    position: absolute;
+    top: 200px;
+    background-color: black;
+    color: white;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+  
+    &:hover {
+      background-color: #333;
+    }
+}
+
+.etc {
+    background-color: rgb(255, 255, 255);
+    top: 1050px;
+    position: absolute;
+    height: 130px;
+    width: 100%;
+    align-items: center; 
+    display: flex;
+
+}
+
+.footer-links {
+    position: relative;
+    text-align: left;
+    font-size: 14px;
+    color: #444;
+    margin-left: 50px;
+  }
+  
+  .footer-links span {
+    display: inline-block;
+    width: 150px;  /* 탭처럼 딱 정렬 */
+  }
+  
