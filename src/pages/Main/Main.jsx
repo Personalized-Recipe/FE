@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./Main.module.scss";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import ChatWindow from "../../components/ChatWindow/ChatWindow";
+import ChatWindow from "../../components/Chatwindow/Chatwindow";
 
 function Main() {
     const [ingredients, setIngredients] = useState([]);
