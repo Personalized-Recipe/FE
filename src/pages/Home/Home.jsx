@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import Login from './Login/Login.jsx';
 import './Home.scss';
@@ -12,6 +12,13 @@ function Home() {
     const handleCloseLogin = () => {
     setShowLogin(false);
     }
+
+    useEffect(() => {
+        document.body.style.overflow = showLogin ? 'hidden' : 'auto';
+        return () => {
+            document.body.style.overflow = 'auto'; // 혹시라도 깔끔하게 정리
+        };
+    }, [showLogin]);
 
   return (
     <div className="Home">

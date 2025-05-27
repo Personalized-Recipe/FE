@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import styles from "./ChatWindow.module.scss";
+import styles from "./Chatwindow.module.scss";
 import Message from '../Message/Message';
 import { handleSend } from '../../utils/chatutils';
 import Recipe from '../Recipe/Recipe';
