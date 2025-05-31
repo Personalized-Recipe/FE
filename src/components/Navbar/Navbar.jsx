@@ -16,7 +16,7 @@ function Navbar({ onClickLogin }) {
             {!isMainPage && (<button className={styles.sign_up} onClick={onClickLogin}>간편 로그인</button>)}
             {isMainPage && (<div className={styles.navbar__links}>
                 <button className="help">도움</button>
-                <button onClick={() => navigate("/Recipe", { state: { background: location } })}>
+                <button onClick={() => navigate("/MyRecipe", { state: { background: location } })}>
                     내 레시피
                 </button>
                 <button onClick={() => navigate("/MyIngre", { state: { background: location } })}>
