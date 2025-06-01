@@ -6,6 +6,24 @@ function Recipe() {
     const [selected, setSelected] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const handleSave = () => {
+        if (selected === null) return;
+
+        const saved = JSON.parse(localStorage.getItem("myRecipes") || "[]");
+        const current = recipes[selected];
+
+        // 중복 저장 방지 (id로 비교)
+        const already = saved.find(r => r.id === current.id);
+        if (already) {
+            alert("이미 저장된 레시피입니다.");
+            return;
+        }
+
+        const updated = [...saved, current];
+        localStorage.setItem("myRecipes", JSON.stringify(updated));
+        alert("레시피가 저장되었습니다");
+    }
+
     useEffect(() => {
         // 여기에 레시피 데이터를 가져오는 로직을 추가
         const dummyRecipes = [
@@ -63,7 +81,7 @@ function Recipe() {
                         <div className={styles.recipeDetail}>{recipes[selected].content}</div>
                         <div className={styles.buttonRow}>
                             <button onClick={() => setSelected(null)}>뒤로가기</button>
-                            <button>저장하기</button>
+                            <button onClick={handleSave}>저장하기</button>
                         </div>
                     </>
                 ) : (

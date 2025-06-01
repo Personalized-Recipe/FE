@@ -77,7 +77,8 @@
 }
 
 .ingreName, .ingreAmount, .ingreUnit{
-    width: 150px;
+    width: 100%;
+    max-width: 150px;
     height: 40px;
     border-radius: 10px;
     border: none;

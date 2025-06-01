@@ -18,7 +18,7 @@ export const useChat = () => {
 
     // 새 채팅방일 경우
     if (messages.length === 0 || !currentRoomId) {
-      const newRoomId = Date.now(); // ✅ 지역 변수로 ID 생성
+      const newRoomId = Date.now(); // 지역 변수로 ID 생성
       const newRoom = {
         id: newRoomId,
         title: input,
