@@ -6,9 +6,13 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     const [isPregnant, setIsPregnant] = useState(""); 
     const [age, setAge] = useState("");
     const [health, setHealth] = useState("");
+    const [healthList, setHealthList] = useState([]);
     const [allergy, setAllergy] = useState("");
+    const [allergyList, setAllergyList] = useState([]);
     const [prefer, setPrefer] = useState("");
+    const [preferList, setPreferList] = useState([]);
     const [dislike, setDislike] = useState("");
+    const [dislikeList, setDislikeList] = useState([]);
 
     const handleInput = setter => e => {
         setter(e.target.value);
@@ -38,6 +42,23 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
         onClose && onClose();
     };
 
+    // 입력값 추가 및 중복 방지
+    const handleCheck = (value, list, setList, setValue) => {
+        if(!value.trim()) return;
+        if (list.includes(health)) {
+            alert('이미 입력된 항목입니다.');   
+            return;
+        }
+        setList([...list, value]);
+        setValue('');
+        setIsEdited(true);
+    };
+
+    // 항목 삭제
+    const hadleDeletee = (index, list, setList) => {
+        setList(list.filter((_, i) => i !== index));
+        setIsEdited(true)
+    };
 
     return (
         <div className={styles.MyPage}>
@@ -96,8 +117,15 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                 onChange={handleInput(setHealth)}
                             />
                         </div>
-                        <button className={styles.checkButton}>확인</button>
-                        <div className={styles.infoBox}>여기에 입력항목</div>
+                        <button className={styles.checkButton} onClick={() => handleCheck(health, healthList, setHealthList, setHealth)}>확인</button>
+                        <div className={styles.infoBox}>
+                            {healthList.map((item, index) => (
+                                <div className={styles.item} key={index}>
+                                    {item}
+                                    <button className={styles.deleteBtn} onClick={() => hadleDeletee(index, healthList,setHealthList)}>x</button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className={styles.user__allergy}>
@@ -111,8 +139,15 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                 onChange={handleInput(setAllergy)}
                             />
                         </div>
-                        <button className={styles.checkButton}>확인</button>
-                        <div className={styles.infoBox}>여기에 입력항목</div>
+                        <button className={styles.checkButton} onClick={() => handleCheck(allergy, allergyList, setAllergyList, setAllergy)}>확인</button>
+                        <div className={styles.infoBox}>
+                            {allergyList.map((item, index) => (
+                                <div className={styles.item} key={index}>
+                                    {item}
+                                    <button className={styles.deleteBtn} onClick={() => hadleDeletee(index, allergyList, setAllergyList)}>x</button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className={styles.user__prefer}>
@@ -126,8 +161,15 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                 onChange={handleInput(setPrefer)}
                             />
                         </div>
-                        <button className={styles.checkButton}>확인</button>
-                        <div className={styles.infoBox}>여기에 입력항목</div>
+                        <button className={styles.checkButton} onClick={() => handleCheck(prefer, preferList, setPreferList, setPrefer)}>확인</button>
+                        <div className={styles.infoBox}>
+                            {preferList.map((item, index) => (
+                                <div className={styles.item} key={index}>
+                                    {item}
+                                    <button className={styles.deleteBtn} onClick={() => hadleDeletee(index, preferList, setPreferList)}>x</button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className={styles.user__dislike}>
@@ -141,8 +183,15 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                 onChange={handleInput(setDislike)}
                             />
                         </div>
-                        <button className={styles.checkButton}>확인</button>
-                        <div className={styles.infoBox}>여기에 입력항목</div>
+                        <button className={styles.checkButton} onClick={() => handleCheck(dislike,dislikeList, setDislikeList, setDislike)}>확인</button>
+                        <div className={styles.infoBox}>
+                            {dislikeList.map((item, index) => (
+                                <div className={styles.item} key={index}>
+                                    {item}
+                                    <button className={styles.deleteBtn} onClick={() => hadleDeletee(index,dislikeList,setDislikeList,setDislike)}>x</button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <button className={styles.editButton} onClick={handleEdit}> 수정하기 </button>
