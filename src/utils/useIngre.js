@@ -20,6 +20,7 @@ export const useIngre = () => {
 
     return {
         ingredients,
+        setIngredients,
         showIngredient,
         handleIngredientClick
     };

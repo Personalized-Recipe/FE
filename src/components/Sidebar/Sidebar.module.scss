@@ -38,23 +38,25 @@
     }
 
     .MyIngreContainer__content {
+    margin-top: 10px;
     border: none;
     flex-direction: column;
     overflow-y: auto;
     display: flex;
     align-items: center;
+    max-height: 45vh;
     }
 
     .sortButton {
     display: flex;
-    width: 40px;
+    width: 60px;
     height: 30px;
     border-radius: 10px;
     border: none;
-    background: none;
+    background: #ffdddd;
     align-items: center;
     justify-content: center;
-    border-bottom: #b7b7b7 1px solid;
+    border-bottom: #a2a2a2 1px solid;
     cursor: pointer;    
 }
 
@@ -63,11 +65,12 @@
         height: 40px;
         width: 70%;
         flex-shrink: 0;
-        background: #F78F10;
+        background: #ffefdb;
         border-radius: 16px;
+        justify-content: center;
         align-items: center;
-        margin: 20px 10px 0;
-        padding: 10px;
+        margin: 2px;
+        padding: 12px;
     }
 }
 

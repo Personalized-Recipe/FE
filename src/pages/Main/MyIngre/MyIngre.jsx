@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyIngre.module.scss";
+import { sortByCreatedAt } from "../../../utils/sort";
 
 function MyIngre() {
   const [input, setInput] = useState("");
@@ -16,7 +17,16 @@ function MyIngre() {
   useEffect(() => {
     const saved = localStorage.getItem("MyIngre");
     if (saved) {
-      setIngredients(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+      // createdAt이 없는 경우 현재 시간으로 채우기
+      const migrated = parsed.map(item => ({
+        ...item,
+        createdAt: item.createdAt || new Date().toISOString()
+      }));
+      // 초기 데이터는 최신순으로 정렬
+      const sorted = sortByCreatedAt(migrated, "recent");
+      setIngredients(sorted)
+      localStorage.setItem("MyIngre", JSON.stringify(sorted));
     }
     if (inputRef.current) {
       inputRef.current.focus();
@@ -45,7 +55,7 @@ function MyIngre() {
   const handleConfirm = () => {
     if (! tempName || !amount || !unit) return;
 
-    const newItem = { name: tempName, amount, unit };
+    const newItem = { name: tempName, amount, unit, createdAt: new Date().toISOString(), };
     const updated = [...ingredients, newItem];
     setIngredients(updated);
     localStorage.setItem("MyIngre", JSON.stringify(updated));
@@ -103,6 +113,7 @@ function MyIngre() {
               <option value="">단위 선택</option>
               <option value="g">g</option>
               <option value="개">개</option>
+              <option value="ml">ml</option>
             </select>
           </div>
           <button className={styles.addButton} onClick={handleConfirm}>추가하기</button>
