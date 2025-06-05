@@ -1,12 +1,13 @@
 .recipeContainer {
     background: none;
-    align-items: center;
-    justify-content: center;
-    width: 760px;
+    width: 100%;
+    max-width: 500px;
     display: flex;
-    flex: 1;
+    justify-self: flex-start;
     flex-direction: column;
     gap: 40px;
+    margin: 0 0 0 100px;
+
 }
 
 .recipeBlockContainer {
@@ -14,12 +15,13 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    height: 120px;
+    height: 100px;
     gap: 20px;
 }
 
 .recipeBlock{
     background-color: rgb(255, 255, 255);
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
     border: 1px solid black;
     border-radius: 10px;
     display: flex;
@@ -27,34 +29,24 @@
     align-items: center;
     overflow-x: auto;
     white-space: nowrap;
-    width: 10vw;
+    width: 80px;
+    color: black;
 
 }
 
 .recipe__content {
-    flex: 1;
     display: flex;
     background-color: white;
     border: 1px solid black;
     border-radius: 20px;
     width: 100%;
-}
-
-.recipeDetailContainer {
-    background-color:darkgreen;
-    display: flex;
-    flex: 1;
-    width: 40vw;
     flex-direction: column;
-    border: 1px solid black;
-    border-radius: 20px;
-    gap: 20px;
-
+    gap: 10px;
+    color: black;
 
     button {
-        border: 2px solid black;
+        border: 1px solid black;
         border-radius: 10px;
-
     }
 }
 
@@ -62,6 +54,8 @@
     display: flex;
     gap: 12px;
     justify-content: flex-end; 
+    margin: 10px;
+
 }
 
 .recipeDetail {

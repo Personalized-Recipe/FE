@@ -1,0 +1,55 @@
+import React, { useState, useEffect } from "react";
+import styles from './MyRecipe.module.scss';
+
+function MyRecipe() {
+const [myRecipes, setMyRecipes] = useState([]);
+const [selected, setSelected] = useState(null);
+
+useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("myRecipes")) || [];
+    setMyRecipes(stored);
+}, []);
+
+const handleDelete = () => {
+    if (selected === null) return;
+
+    const updated = myRecipes.filter((_, idx) => idx !== selected);
+    localStorage.setItem("myRecipes", JSON.stringify(updated));
+    setMyRecipes(updated);
+    setSelected(null);
+};
+
+    return(
+        <div className={styles.myrecipe}>
+            <p className={styles.myrecipe__header}>나의 레시피 북</p>
+            <div className={styles.myrecipe__content}>
+                <div className={styles.recipe__list}>{myRecipes.length === 0 ? (
+                        <p>저장된 레시피가 없습니다.</p>
+                    ) : (
+                        myRecipes.map((r, idx) => (
+                            <div className={`${styles.recipe} ${selected === idx ? styles.active : ''}`} 
+                            key={r.id || idx} 
+                            onClick={() => setSelected(idx)}
+                            >
+                                {r.title}
+                            </div>
+                        ))
+                    )}
+                </div>
+                <div className={styles.recipe__info}>
+                    {selected !== null ? (
+                        <>
+                            <h3>{myRecipes[selected].title}</h3>
+                            <p>{myRecipes[selected].content}</p>
+                            <button className={styles["recipe-delete"]} onClick={handleDelete}>내 레시피 북에서 지우기</button>
+                        </>
+                    ) : (
+                        <p>레시피를 선택하세요.</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default MyRecipe;

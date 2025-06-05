@@ -4,7 +4,7 @@ import Main from "./pages/Main/Main";
 import Home from "./pages/Home/Home";
 import MyIngre from "./pages/Main/MyIngre/MyIngre";
 import MyPage from "./pages/Main/MyPage/MyPage";
-import Recipe from "./pages/Main/Recipe/Recipe";
+import MyRecipe from "./pages/Main/MyRecipe/MyRecipe";
 import Logout from "./pages/Main/Logout/Logout";
 import ModalWrapper from "./components/ModalWrapper/ModalWrapper";
 import "./App.scss";
@@ -58,9 +58,9 @@ function App() {
                 />
               </ModalWrapper>
           } />
-          <Route path="/Recipe" element={
+          <Route path="/MyRecipe" element={
             <ModalWrapper handleClose={handleModalClose}>
-              <Recipe 
+              <MyRecipe 
                 onClose={handleModalClose} 
                 setIsEdited={setIsEdited}
                 showAlert={showAlert}

@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./Sidebar.module.scss";
+import ChatList from "../ChatList/ChatList";
 
-function Sidbar({showIngredient, ingredients}) {
+function Sidbar({showIngredient, ingredients, onSelectChat}) {
     return (
         <div className={styles.sidebar}>
             <div className={styles.sidebar__header}>채팅 목록</div>
@@ -19,9 +20,7 @@ function Sidbar({showIngredient, ingredients}) {
             
                     </div>
                 )
-                : (
-                    <div className={styles.sidebar__content}> 여기에 채팅 </div>
-                )}
+                : (<ChatList onSelectChat={onSelectChat}/>)}
         </div>
     );
 }

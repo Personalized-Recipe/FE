@@ -1,15 +1,15 @@
 .sidebar{
     display: flex;
-    background: none;
-    border: 1px solid rgb(0, 0, 0);
-    width: 25vw;
+    border: 1px solid rgb(226, 226, 226);
+    width: 30%;
     min-width: 200px;
-    color: rgb(255, 255, 255);
+    height: 100vh;
+    color: rgb(0, 0, 0);
     overflow-y: auto;
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-    gap: 60px;
+    gap: 30px;
 
     .MyIngreContainer {
         display: flex;
@@ -27,9 +27,7 @@
         width: 100%;
         min-height: 40px;
         display: flex;
-        background: none;
         font-size: 16px;
-        text-align: center;
         justify-content: center;
         align-items: center;
         border-bottom: 1px solid rgb(0, 0, 0);
@@ -40,12 +38,10 @@
     }
 
     .MyIngreContainer__content {
-    background: none;
     border: none;
     flex-direction: column;
     overflow-y: auto;
     display: flex;
-    flex: 1;
     align-items: center;
     }
 
@@ -65,31 +61,20 @@
     .item {
         display: flex;
         height: 40px;
-        width: 80%;
+        width: 70%;
         flex-shrink: 0;
         background: #F78F10;
-        border-radius: 10px;
-        text-align: center;
-        justify-content: center;
+        border-radius: 16px;
         align-items: center;
-        margin: 24px 10px 0;
+        margin: 20px 10px 0;
         padding: 10px;
     }
 }
 
 .sidebar__header {
-    height: 50px;
-    width: 80%;
-    background: #ff5454;
     border-bottom: 1px solid rgb(0, 0, 0);
-    display: flex;
-    justify-content: center;
-    align-items: end;
-    
+    padding: 13px;
+    text-align: center;
+    margin: 12px;
 }
 
-.sidebar__content {
-        flex: 1;
-        background: #ff11df;;
-        width: 100%;
-}
