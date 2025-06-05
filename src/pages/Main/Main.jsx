@@ -6,6 +6,7 @@ import ChatWindow from "../../components/ChatWindow/ChatWindow.jsx";
 import ChatInput from "../../components/ChatInput/ChatInput";
 import { useChat } from "../../utils/useChat.js";
 import { useIngre } from "../../utils/useIngre.js";
+import { sortByCreatedAt } from "../../utils/sort";
 
 function Main() {
     const {
@@ -19,7 +20,7 @@ function Main() {
     const [currentRoomId, setCurrentRoomId] = useState(null);
 
     const {
-        ingredients, showIngredient, handleIngredientClick
+        ingredients, setIngredients, showIngredient, handleIngredientClick
     } = useIngre();
 
     const handleSelectChat = (room) => {
@@ -35,12 +36,23 @@ function Main() {
         sendMessage(currentRoomId);
     }
 
+    const handleSort = (order) => {
+        const sorted = sortByCreatedAt(ingredients, order);
+        console.log("정렬 후:", sorted);
+        setIngredients(sorted);
+        localStorage.setItem("MyIngre", JSON.stringify(sorted));
+    }
 
     return (
         <div className={styles.main}>
             <Navbar />
             <div className={styles.main__content}>
-                <Sidebar showIngredient={showIngredient} ingredients={ingredients} onSelectChat={handleSelectChat} />
+                <Sidebar 
+                    showIngredient={showIngredient} 
+                    ingredients={ingredients} 
+                    onSelectChat={handleSelectChat} 
+                    onSort={handleSort} 
+                />
                 <div className={styles.main__chat}>
                     <ChatWindow messages={messages} chatTitle={chatTitle} isLoadingRecipe={isLoadingRecipe} />  
                     <ChatInput 

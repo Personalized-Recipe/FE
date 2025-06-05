@@ -12,10 +12,9 @@
 
 .inputContainer {
     display: flex;
-    width: 38vw;
-    height: 5vh;
+    width: 30vw;
+    height: 3vh;
     gap: 20px;
-    align-items: center;
     justify-content: center;
 }
 
@@ -72,8 +71,8 @@
     flex-direction: column;
     gap: 20px;
     align-items: center;
-    justify-content: center;
-    text-align: center;
+    // justify-content: center;
+    // text-align: center;
 }
 
 .ingreName, .ingreAmount, .ingreUnit{
@@ -81,21 +80,23 @@
     max-width: 150px;
     height: 40px;
     border-radius: 10px;
+    background-color: #fffbf6;
     border: none;
-    background-color: #F78F10;
     text-indent: 5px;
+    text-align: center;
 }
 
 .ingreName:focus,
 .ingreAmount:focus,
 .ingreUnit:focus {
-    outline: 2px solid #6c10f7;
-    border: 2px solid #6c10f7;
-    box-shadow: 0 0 4px #6c10f7;
+    outline: 1px solid #F78F10;
+    border: 1px solid #F78F10;
+    box-shadow: 0 0 4px #F78F10;
 }
 
 .addButton {
     background-color:#F78F10;
+    color:white;
     width: 40%;
     height: 35px;
     border-radius: 10px;
@@ -123,7 +124,6 @@
     border-radius: 10px;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    margin: 20px 0 0;
+    margin: 10px 0 0;
     flex-shrink: 0;
 }
