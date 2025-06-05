@@ -15,12 +15,17 @@ function Navbar({ onClickLogin }) {
             </div>
             {!isMainPage && (<button className={styles.sign_up} onClick={onClickLogin}>간편 로그인</button>)}
             {isMainPage && (<div className={styles.navbar__links}>
-                <button className="help">도움</button>
-                <button onClick={() => navigate("/MyRecipe", { state: { background: location } })}>
+                <button className={styles["hover-area"]} onClick={() => navigate("/MyRecipe", { state: { background: location } })}>
                     내 레시피
+                    <div className={styles["tooltip"]}>
+                    저장한 레시피의 정보를 한 눈에 볼 수 있어요
+                    </div>
                 </button>
-                <button onClick={() => navigate("/MyIngre", { state: { background: location } })}>
+                <button className={styles["hover-area"]}onClick={() => navigate("/MyIngre", { state: { background: location } })}>
                     내 재료
+                    <div className={styles["tooltip"]}>
+                    냉장고에 있는 재료를 기록할 수 있어요
+                    </div>
                 </button>
                 <button onClick={() => navigate("/MyPage", { state: { background: location } })}>
                     프로필

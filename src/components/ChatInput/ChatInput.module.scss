@@ -29,3 +29,43 @@
          cursor: pointer;    
     }
 }
+
+// 도움말 
+.hover-area {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+
+  &:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  background-color: #ffdddd;
+  color: #333;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 10px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #ffdddd;
+  }
+}

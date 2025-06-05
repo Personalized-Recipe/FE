@@ -4,7 +4,12 @@ import styles from "./ChatInput.module.scss";
 function ChatInput({input, setInput, onSend, handleIngredientClick}) {
     return(
         <div className={styles.chatInput}>
-            <button onClick={handleIngredientClick}>냉장고 재료</button>
+            <button className={styles["hover-area"]} onClick={handleIngredientClick}>
+                냉장고 재료
+                <div className={styles["tooltip"]}>
+                    내가 등록한 재료를 기반으로 추천을 받을 수 있어요
+                </div>
+            </button>
             <input
                 type="text" 
                 value={input}
