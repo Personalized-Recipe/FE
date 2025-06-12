@@ -1,12 +1,13 @@
-import React,{ useState } from "react";
+import React,{ useState, useEffect } from "react";
 import styles from "./Main.module.scss";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import ChatWindow from "../../components/ChatWindow/ChatWindow.jsx";
+import ChatWindow from "../../components/ChatWindow/ChatWindow";
 import ChatInput from "../../components/ChatInput/ChatInput";
 import { useChat } from "../../utils/useChat.js";
 import { useIngre } from "../../utils/useIngre.js";
 import { sortByCreatedAt } from "../../utils/sort";
+import { createChatRoom } from "../../utils/createChatRoom.js";
 
 function Main() {
     const {
@@ -16,12 +17,17 @@ function Main() {
         isLoadingRecipe, setIsLoadingRecipe,
         sendMessage
     } = useChat();
-
     const [currentRoomId, setCurrentRoomId] = useState(null);
-
+    const [chatRooms, setChatRooms] = useState([]);
     const {
         ingredients, setIngredients, showIngredient, handleIngredientClick
     } = useIngre();
+
+    // 채팅방 목록 동기화
+    useEffect(() => {
+        const stored = JSON.parse(localStorage.getItem("chatRooms")) || [];
+        setChatRooms(stored);
+    }, [messages]);
 
     const handleSelectChat = (room) => {
         setMessages(room.messages || []);
@@ -29,16 +35,22 @@ function Main() {
         setCurrentRoomId(room.id);
         setInput('');
         setIsLoadingRecipe(false); // 초기화
-        setCurrentRoomId(room.id);
     };
 
     const handleSend = () => {
         sendMessage(currentRoomId);
     }
 
+    // 새 채팅방 생성
+    const handleCreateChatRoom = () => {
+        const {newRoom, updatedRooms } = createChatRoom(chatRooms);
+        setChatRooms(updatedRooms);
+        handleSelectChat(newRoom);
+    }
+
+    // 냉장고 재료 졍렬
     const handleSort = (order) => {
         const sorted = sortByCreatedAt(ingredients, order);
-        console.log("정렬 후:", sorted);
         setIngredients(sorted);
         localStorage.setItem("MyIngre", JSON.stringify(sorted));
     }
@@ -52,6 +64,8 @@ function Main() {
                     ingredients={ingredients} 
                     onSelectChat={handleSelectChat} 
                     onSort={handleSort} 
+                    chatRooms={chatRooms}
+                    onCreateChatRoom={handleCreateChatRoom}
                 />
                 <div className={styles.main__chat}>
                     <ChatWindow messages={messages} chatTitle={chatTitle} isLoadingRecipe={isLoadingRecipe} />  

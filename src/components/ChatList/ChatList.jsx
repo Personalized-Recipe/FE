@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from './ChatList.module.scss';
 
-function ChatList({onSelectChat}) {
-    const [chatRooms, setChatRooms] = useState([]);
-    
-    useEffect(() => {
-        const stored = JSON.parse(localStorage.getItem("chatRooms")) || [];
-        const sorted = stored.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setChatRooms(sorted);
-    },[]);
+function ChatList({chatRooms, onSelectChat}) {
     
     const handleRoomClick = (room) => {
         onSelectChat(room);

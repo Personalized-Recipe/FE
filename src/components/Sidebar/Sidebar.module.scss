@@ -75,9 +75,28 @@
 }
 
 .sidebar__header {
+    position: relative;
     border-bottom: 1px solid rgb(0, 0, 0);
-    padding: 13px;
-    text-align: center;
-    margin: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    width: 100%;
+}
+
+
+.createChatBtn {
+    position: absolute;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    background-color: bisque;
+    right: 20px;
+    border-radius: 20px;
+
+}
+
+.createChatBtn:hover {
+    background-color: white;
 }
 
