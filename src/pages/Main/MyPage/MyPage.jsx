@@ -63,7 +63,7 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     return (
         <div className={styles.MyPage}>
             <div className={styles.MyPage__header}>
-                <h1>프로필 이미지</h1>
+                <img src="/basic.png" alt="기본 프로필" className={styles.profile}/>
                 <p>홍길동</p>
             </div>
             <div className={styles.MyPage__content}>

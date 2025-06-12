@@ -2,7 +2,7 @@ import React,{ useState } from "react";
 import styles from "./Sidebar.module.scss";
 import ChatList from "../ChatList/ChatList";
 
-function Sidbar({showIngredient, ingredients, onSelectChat, onSort}) {
+function Sidebar({chatRooms, showIngredient, ingredients, onSelectChat, onSort, onCreateChatRoom}) {
     const [sortOrder, setSortOrder] = useState("recent");
 
     const handleSort = () => {
@@ -13,7 +13,12 @@ function Sidbar({showIngredient, ingredients, onSelectChat, onSort}) {
 
     return (
         <div className={styles.sidebar}>
-            <div className={styles.sidebar__header}>채팅 목록</div>
+            <div className={styles.sidebar__header}>
+                채팅 목록
+                <button className={styles.createChatBtn} onClick={onCreateChatRoom}>
+                    +
+                </button>
+                </div>
                 {showIngredient ? (
                     <div className={styles.MyIngreContainer}>
                         <div className={styles.MyIngreContainer__header}>
@@ -30,9 +35,9 @@ function Sidbar({showIngredient, ingredients, onSelectChat, onSort}) {
             
                     </div>
                 )
-                : (<ChatList onSelectChat={onSelectChat}/>)}
+                : (<ChatList chatRooms={chatRooms} onSelectChat={onSelectChat}/>)}
         </div>
     );
 }
 
-export default Sidbar;
+export default Sidebar;
