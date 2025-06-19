@@ -27,21 +27,21 @@ function Home() {
             <h1 className="cong" style={{ fontSize: "2.5rem" }}><strong style={{ fontSize: "3rem" }}>{'\u00a0'}만개의 레시피{'\u00a0'}</strong>에 오신걸 환영합니다!</h1>
             <p className="sup">저희는 차별화된 서비스를 제공합니다.</p>
             <div className="personality">
-                <div style={{ fontSize: "130px" }}>🍱</div>
+                <img src="/refrigerator.png" alt="로그인" className="refriImg" />
                 <div className="per-footer">
-                    개인화된 레시피 솔루션
+                    <p>✿ 냉장고 속 재료로 레시피 추천</p>
                 </div>
             </div>
             <div className="ingredient">
-                <div style={{ fontSize: "130px" }}>👩🏻‍🌾</div>
+                <img src="/recipe.png" alt="로그인" className="recipeImg" />
                 <div className="ing-footer">
-                    냉장고 재료로 레시피 추천
+                    <p>❀ 개인화 된 레시피 솔루션</p>
                 </div>
             </div>
             <div className="replace">
-                <div style={{ fontSize: "130px" }}>🥒</div>
+                <img src="/replace.PNG" alt="로그인" className="replaceImg" />
                 <div className="rep-footer">
-                    대체 재료 추천
+                    <p>❁ 대체 재료 추천</p>
                 </div>
             </div>
         </div>
