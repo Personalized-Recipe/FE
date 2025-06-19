@@ -9,7 +9,7 @@
 
 .chatWindow {
     height: 100vh;
-    width: 90%;
+    width: 100%;
     overflow-y: auto;
     background-color: rgb(244, 244, 244);
 }
@@ -17,12 +17,16 @@
 .chatWindow__header {
     background: #ffead0;
     height: 50px;
+    width: 100%;
     display: flex;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #626262;
+    border-bottom: 1px solid rgb(243, 243, 243);
+    position: fixed;
 }
 
 .chatWindow__content {
+    padding-top: 80px;
+    padding-bottom: 20px;
     overflow: scroll;
 }

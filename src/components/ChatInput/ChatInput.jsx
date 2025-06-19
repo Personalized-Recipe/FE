@@ -4,12 +4,17 @@ import styles from "./ChatInput.module.scss";
 function ChatInput({input, setInput, onSend, onToggleIngredient}) {
     return(
         <div className={styles.chatInput}>
-            <button className={styles["hover-area"]} onClick={onToggleIngredient}>
-                냉장고 재료
+            <label className={styles["hover-area"]}>
+                <input
+                    type="checkbox"
+                    className={styles["checkbox"]}
+                    onChange={onToggleIngredient}
+                />
+                <span className={styles["label-text"]}>냉장고</span>
                 <div className={styles["tooltip"]}>
                     내가 등록한 재료를 기반으로 추천을 받을 수 있어요
                 </div>
-            </button>
+            </label>
             <input
                 type="text" 
                 value={input}
