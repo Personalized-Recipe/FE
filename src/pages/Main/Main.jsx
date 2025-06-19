@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from "react";
+import React,{ useState } from "react";
 import styles from "./Main.module.scss";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -6,7 +6,6 @@ import ChatWindow from "../../components/ChatWindow/ChatWindow";
 import ChatInput from "../../components/ChatInput/ChatInput";
 import { useChat } from "../../utils/useChat.js";
 import { useIngre } from "../../utils/useIngre.js";
-import { sortByCreatedAt } from "../../utils/sort";
 import { createChatRoom } from "../../utils/createChatRoom.js";
 
 function Main() {
@@ -15,19 +14,19 @@ function Main() {
         chatTitle, setChatTitle,
         input, setInput,
         isLoadingRecipe, setIsLoadingRecipe,
-        sendMessage
+        sendMessage,
+        chatRooms, setChatRooms
     } = useChat();
-    const [currentRoomId, setCurrentRoomId] = useState(null);
-    const [chatRooms, setChatRooms] = useState([]);
-    const {
-        ingredients, setIngredients, showIngredient, handleIngredientClick
-    } = useIngre();
 
-    // 채팅방 목록 동기화
-    useEffect(() => {
-        const stored = JSON.parse(localStorage.getItem("chatRooms")) || [];
-        setChatRooms(stored);
-    }, [messages]);
+    const { ingredients, handleIngredient } = useIngre();
+    const [showIngredient, setShowIngredient] = useState(false);
+
+    const [currentRoomId, setCurrentRoomId] = useState(null);
+
+    const handleToggleIngredient = () => {
+        handleIngredient();
+        setShowIngredient(prev => !prev);
+    };
 
     const handleSelectChat = (room) => {
         setMessages(room.messages || []);
@@ -39,6 +38,7 @@ function Main() {
 
     const handleSend = () => {
         sendMessage(currentRoomId);
+        console.log("채팅 전송")
     }
 
     // 새 채팅방 생성
@@ -48,33 +48,27 @@ function Main() {
         handleSelectChat(newRoom);
     }
 
-    // 냉장고 재료 졍렬
-    const handleSort = (order) => {
-        const sorted = sortByCreatedAt(ingredients, order);
-        setIngredients(sorted);
-        localStorage.setItem("MyIngre", JSON.stringify(sorted));
-    }
-
     return (
         <div className={styles.main}>
             <Navbar />
             <div className={styles.main__content}>
                 <Sidebar 
-                    showIngredient={showIngredient} 
-                    ingredients={ingredients} 
+                    showIngredient={showIngredient}
+                    ingredients={ingredients}
                     onSelectChat={handleSelectChat} 
-                    onSort={handleSort} 
                     chatRooms={chatRooms}
                     onCreateChatRoom={handleCreateChatRoom}
                 />
                 <div className={styles.main__chat}>
-                    <ChatWindow messages={messages} chatTitle={chatTitle} isLoadingRecipe={isLoadingRecipe} />  
+                    <ChatWindow 
+                    messages={messages} 
+                    chatTitle={chatTitle} 
+                    isLoadingRecipe={isLoadingRecipe} 
+                    />  
                     <ChatInput 
                         input={input}
                         setInput={setInput}
-                        messages={messages} 
-                        setMessages={setMessages} 
-                        handleIngredientClick={handleIngredientClick} 
+                        onToggleIngredient={handleToggleIngredient}
                         onSend={handleSend}
                     />
                 </div>

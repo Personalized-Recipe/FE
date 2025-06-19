@@ -1,15 +1,17 @@
 import React,{ useState } from "react";
 import styles from "./Sidebar.module.scss";
 import ChatList from "../ChatList/ChatList";
+import { sortByCreatedAt } from "../../utils/sort";
 
-function Sidebar({chatRooms, showIngredient, ingredients, onSelectChat, onSort, onCreateChatRoom}) {
+function Sidebar({chatRooms, onSelectChat, onCreateChatRoom, showIngredient, ingredients}) {
     const [sortOrder, setSortOrder] = useState("recent");
 
     const handleSort = () => {
         const newOrder = sortOrder === "recent" ? "oldest" : "recent";
-        onSort(newOrder);
         setSortOrder(newOrder);
     }
+
+    const sortedIngredients = sortByCreatedAt(ingredients, sortOrder);
 
     return (
         <div className={styles.sidebar}>
@@ -28,11 +30,12 @@ function Sidebar({chatRooms, showIngredient, ingredients, onSelectChat, onSort, 
                             </div>
                         </div>
                         <div className={styles.MyIngreContainer__content}>
-                            {ingredients.map((item, idx) => (
-                            <div className={styles.item} key={idx}>{item.name} - {item.amount} {item.unit}</div>
+                            {sortedIngredients.map((item, idx) => (
+                                <div className={styles.item} key={idx}>
+                                    {item.name} - {item.amount} {item.unit}
+                                </div>
                             ))} 
                         </div>
-            
                     </div>
                 )
                 : (<ChatList chatRooms={chatRooms} onSelectChat={onSelectChat}/>)}

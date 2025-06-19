@@ -23,16 +23,17 @@
     width: 70%;
     height: 36px;
     border-radius: 10px;
-    border: 1px solid rgb(0, 0, 0);
+    border: 1px solid rgb(196, 196, 196);
+    box-shadow: 0px 4px 12px 0px rgb(238, 238, 238);
     padding-left: 10px;
 }
 
 .searchButton {
-    background-color:#F78F10;
+    border: 1px solid #ffe5b4;
+    box-shadow: 0px 4px 12px 0px rgb(238, 238, 238);
     width: 15%;
     height: 40px;
     border-radius: 10px;
-    border: none;
 }
 
 .listContainer {
@@ -45,7 +46,8 @@
     flex-direction: row;
     overflow-y: scroll;
     background: none;
-    border: 1px solid rgb(0, 0, 0);
+    border: 1px solid rgb(196, 196, 196);
+    box-shadow: 0px 4px 12px 0px rgb(238, 238, 238);
 }
 
 .ingreInfo {
@@ -55,6 +57,7 @@
     background: white;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .infoContainer {
@@ -69,6 +72,7 @@
     gap: 20px;
     align-items: center;
     justify-content: center;
+
 }
 
 .ingreName, .ingreAmount, .ingreUnit{
@@ -76,10 +80,13 @@
     max-width: 150px;
     height: 40px;
     border-radius: 10px;
-    background-color: #fffbf6;
+    background-color: #ebebeb;
     border: none;
-    text-indent: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
+    padding: 0;
 }
 
 .ingreName:focus,
@@ -91,8 +98,8 @@
 }
 
 .addButton {
-    background-color:#F78F10;
-    color:white;
+    background-color:#ffe5b4;
+    box-shadow: 0px 4px 12px 0px rgb(238, 238, 238);
     width: 40%;
     height: 35px;
     border-radius: 10px;
@@ -115,7 +122,7 @@
 .Item {
     display: flex;
     width: 80%;
-    height: 60px;
+    height: 50px;
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     align-items: center;

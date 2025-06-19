@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import styles from './MyRecipe.module.scss';
+import useList from "../../../utils/useList";
 
 function MyRecipe() {
-const [myRecipes, setMyRecipes] = useState([]);
-const [selected, setSelected] = useState(null);
+    const stored = () => {
+        return JSON.parse(localStorage.getItem("myRecipes")) || [];
+    }
 
-useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("myRecipes")) || [];
-    setMyRecipes(stored);
-}, []);
+    const [selected, setSelected] = useState(null);
+    const [myRecipes, ,removeRecipe,] = useList(stored());
 
-const handleDelete = () => {
-    if (selected === null) return;
+    useEffect(() => {
+        localStorage.setItem("myRecipes", JSON.stringify(myRecipes));
+    }, [myRecipes]);
 
-    const updated = myRecipes.filter((_, idx) => idx !== selected);
-    localStorage.setItem("myRecipes", JSON.stringify(updated));
-    setMyRecipes(updated);
-    setSelected(null);
-};
+    const handleDelete = () => {
+        if (selected === null) return;
+
+        setSelected(null);
+        removeRecipe(selected);
+    };
 
     return(
         <div className={styles.myrecipe}>
