@@ -24,10 +24,6 @@ function App() {
     }
   };
 
-
-  console.log("background:", background);
-  console.log("location.pathname:", location.pathname);
-
   return (
     <div className="App"> 
       <Routes location={background || location}>

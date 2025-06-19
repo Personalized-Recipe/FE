@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyIngre.module.scss";
-import { sortByCreatedAt } from "../../../utils/sort";
 
 function MyIngre() {
   const [input, setInput] = useState("");
@@ -23,14 +22,9 @@ function MyIngre() {
         ...item,
         createdAt: item.createdAt || new Date().toISOString()
       }));
-      // 초기 데이터는 최신순으로 정렬
-      const sorted = sortByCreatedAt(migrated, "recent");
-      setIngredients(sorted)
-      localStorage.setItem("MyIngre", JSON.stringify(sorted));
-    }
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+      setIngredients(migrated);
+    } 
+    inputRef.current?.focus();
   }, []);
 
   const handleAdd = () => {
@@ -38,11 +32,7 @@ function MyIngre() {
 
     setTempName(input);
     setInput("");
-    setTimeout(() => {
-      if (amountRef.current) {
-        amountRef.current.focus();
-      }
-    }, 0);
+    setTimeout(amountRef.current?.focus(), 0);
   };
 
   const handleUnitChange = (e) => {
@@ -56,16 +46,17 @@ function MyIngre() {
     if (! tempName || !amount || !unit) return;
 
     const newItem = { name: tempName, amount, unit, createdAt: new Date().toISOString(), };
-    const updated = [...ingredients, newItem];
-    setIngredients(updated);
+    const stored = localStorage.getItem("MyIngre");
+    const parsed = JSON.parse(stored) || [];
+    const updated = [...parsed, newItem];
     localStorage.setItem("MyIngre", JSON.stringify(updated));
 
+    setIngredients(updated)
     setTempName("");
     setAmount("");
     setUnit("");
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
+
   }
 
   return (
@@ -77,6 +68,7 @@ function MyIngre() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="재료 입력"
+          ref={inputRef}
         />
         <button className={styles.searchButton} onClick={handleAdd}>검색</button>
       </div>

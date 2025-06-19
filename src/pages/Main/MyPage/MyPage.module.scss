@@ -47,13 +47,14 @@
     background: none;
     display: flex;
     height: 30px;
-    width: 60%;
+    width: 70%;
+    margin-bottom: 13px;
 
     input {
         height: 100%;
         flex: 1;
         border-radius: 10px;
-        border: 1px solid #000000;
+        border: 1px solid rgb(107, 107, 107);
         text-indent: 10px;
     }
 
@@ -65,7 +66,6 @@
     width: 30%;
     height: 30px;
     border-radius: 10px;
-    border: 1px solid #000000;
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -74,7 +74,7 @@
 }
 
 .editButton:hover {
-  background: #9f9f9f;
+  background: #c9c9c9;
   color: #fff;
   box-shadow: 0 0 2px #9f9f9f;
 }
@@ -90,6 +90,7 @@
 
     & > div {
         background: #fff;
+        border: 1px solid rgb(196, 196, 196);
         border-radius: 12px;
         border-bottom: 1px solid #000000;
         padding: 32px 40px;
@@ -111,22 +112,21 @@
         align-items: center;
         background: none;
         color: #000;
-        border: #000000 1px solid;
+        border: 1px solid rgb(147, 147, 147);
         border-radius: 10px;
         padding: 10px 20px;
         cursor: pointer;
         font-size: 16px;
     }
     & > div > button:hover {
-        background: #9f9f9f;
-        color: #fff;
-        box-shadow: 0 0 2px #9f9f9f;
-    }
+        background: #ffdddd;
+        color: #fff;    }
 }
 
 // -------------- 공통 --------------
 .button {
-    border:#000000 1px solid;
+    border: 1px solid rgb(196, 196, 196);
+    box-shadow: 0px 4px 12px 0px rgb(238, 238, 238); 
     display: flex;
     flex: 1;
     justify-content: center;
@@ -135,29 +135,19 @@
 }
 
 .button:hover {
-    background: #9f9f9f;
+    background: #d7d7d7;
     color: #fff;
-    box-shadow: 0 0 2px #9f9f9f;
 }
-
-.button.active {
-    background: #9f9f9f;
-    color: #fff;
-    box-shadow: 0 0 2px #9f9f9f;
-}
-
 .checkButton {
-    border: #000000 1px solid;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    border: 1px solid rgb(196, 196, 196);
+    box-shadow: 0px 4px 12px 0px rgb(238, 238, 238); 
     border-radius: 10px;
+    height: 34px;
 }
 
 .checkButton:hover {
-    background: #9f9f9f;
+    background: #bfbfbf;
     color: #fff;
-    box-shadow: 0 0 2px #9f9f9f;
 }
 
 .labeledBox {
@@ -165,7 +155,7 @@
     display: flex;
     width: 380px;
     margin: 30px;
-    border: 1px solid #000000;
+    border: 1px solid rgb(125, 125, 125);
     border-radius: 12px;
     padding: 24px 16px 16px;
     gap: 10px;
@@ -200,7 +190,7 @@
     width: 120px;
     justify-content: center;
     align-items: center;
-    border: 1px solid #000;
+    border: 1px solid rgb(125, 125, 125);
     border-radius: 10px;
     height: 25px;
     font-size: 13px;

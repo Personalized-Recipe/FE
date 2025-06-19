@@ -66,7 +66,7 @@ function Recipe() {
             <div className={styles.recipeBlockContainer}>
                 {recipes.map((recipe, idx) => (
                     <div
-                        key = {recipe.id || idx}
+                        key = {recipe.id}
                         className = {`${styles.recipeBlock}`}
                         onClick={() => setSelected(idx)}
                     >
@@ -75,7 +75,7 @@ function Recipe() {
                 ))}
             </div>
             <div className={styles.recipe__content}>
-                {selected !== null ? (
+                {selected !== null && recipes[selected] ? (
                     <>
                         <h2>{recipes[selected].title}</h2>
                         <div className={styles.recipeDetail}>{recipes[selected].content}</div>

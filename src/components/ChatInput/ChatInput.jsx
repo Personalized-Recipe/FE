@@ -1,10 +1,10 @@
 import React from "react";
 import styles from "./ChatInput.module.scss";
 
-function ChatInput({input, setInput, onSend, handleIngredientClick}) {
+function ChatInput({input, setInput, onSend, onToggleIngredient}) {
     return(
         <div className={styles.chatInput}>
-            <button className={styles["hover-area"]} onClick={handleIngredientClick}>
+            <button className={styles["hover-area"]} onClick={onToggleIngredient}>
                 냉장고 재료
                 <div className={styles["tooltip"]}>
                     내가 등록한 재료를 기반으로 추천을 받을 수 있어요
