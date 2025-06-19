@@ -6,22 +6,24 @@ import ChatWindow from "../../components/ChatWindow/ChatWindow";
 import ChatInput from "../../components/ChatInput/ChatInput";
 import { useChat } from "../../utils/useChat.js";
 import { useIngre } from "../../utils/useIngre.js";
-import { createChatRoom } from "../../utils/createChatRoom.js";
 
 function Main() {
     const {
-        messages, setMessages,
-        chatTitle, setChatTitle,
+        currentRoomId, setCurrentRoomId,
         input, setInput,
         isLoadingRecipe, setIsLoadingRecipe,
         sendMessage,
-        chatRooms, setChatRooms
+        createChatRoom,
+        chatRooms
     } = useChat();
 
     const { ingredients, handleIngredient } = useIngre();
     const [showIngredient, setShowIngredient] = useState(false);
 
-    const [currentRoomId, setCurrentRoomId] = useState(null);
+     // 현재 선택된 방의 messages 
+    const currentRoom = chatRooms.find(room => room.id === currentRoomId);
+    const messages = currentRoom ? currentRoom.messages : [];
+    const chatTitle = currentRoom ? currentRoom.title : '새 채팅방';
 
     const handleToggleIngredient = () => {
         handleIngredient();
@@ -29,23 +31,20 @@ function Main() {
     };
 
     const handleSelectChat = (room) => {
-        setMessages(room.messages || []);
-        setChatTitle(room.title);
         setCurrentRoomId(room.id);
         setInput('');
         setIsLoadingRecipe(false); // 초기화
     };
 
+    // 새 채팅방 생성
+    const handleCreateChatRoom = () => {
+        createChatRoom();
+    };
+
+    // 채팅 메시지 전송
     const handleSend = () => {
         sendMessage(currentRoomId);
         console.log("채팅 전송")
-    }
-
-    // 새 채팅방 생성
-    const handleCreateChatRoom = () => {
-        const {newRoom, updatedRooms } = createChatRoom(chatRooms);
-        setChatRooms(updatedRooms);
-        handleSelectChat(newRoom);
     }
 
     return (

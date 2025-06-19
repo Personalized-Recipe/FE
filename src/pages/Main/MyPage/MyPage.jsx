@@ -13,12 +13,10 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     const [health, setHealth] = useState("");
     const [allergy, setAllergy] = useState("");
     const [prefer, setPrefer] = useState("");
-    const [dislike, setDislike] = useState("");
 
-    const [healthList, addHealth, removeHealth] = useList(user?.healthList || []);
-    const [allergyList, addAllergy, removeAllergy] = useList(user?.allergyList || []);
-    const [preferList, addPrefer, removePrefer] = useList(user?.preferList || []);
-    const [dislikeList, addDislike, removeDislike] = useList(user?.dislikeList || []);
+    const [healthList, addHealth, ,removeHealth] = useList(user?.healthList || []);
+    const [allergyList, addAllergy, ,removeAllergy] = useList(user?.allergyList || []);
+    const [preferList, addPrefer, ,removePrefer] = useList(user?.preferList || []);
 
     const handlePregnant = value => {
         setIsPregnant(value);
@@ -36,7 +34,6 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
             healthList,
             allergyList,
             preferList,
-            dislikeList
         }
         });
         setIsEdited(false)
@@ -51,7 +48,6 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
         setHealth(user.healthList || []);
         setAllergy(user.allergyList || []);
         setPrefer(user.preferList || []);
-        setDislike(user.dislikeList || []);
         }
     }, [user]);
 
@@ -137,7 +133,11 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                             />
                         </div>
                         <button className={styles.checkButton} onClick={() => {
-                             if (!addHealth(health)) alert("이미 입력된 항목입니다.");
+                            if (!health.trim()) {
+                                alert("입력된 항목이 없습니다.");
+                                return;
+                            }
+                            if (!addHealth(health)) alert("이미 입력된 항목입니다.");
                             setHealth('');
                             setIsEdited(true);
                         }}>확인</button>
@@ -169,6 +169,10 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                             />
                         </div>
                         <button className={styles.checkButton} onClick={() => {
+                            if (!allergy.trim()) {
+                                alert("입력된 항목이 없습니다.")
+                                return;
+                            };
                             if(!addAllergy(allergy)) alert("이미 입력된 항목입니다.");
                             setAllergy('');
                             setIsEdited(true);
@@ -201,6 +205,10 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                             />
                         </div>
                         <button className={styles.checkButton} onClick={() => {
+                            if (!prefer.trim()) {
+                                alert("입력된 항목이 없습니다.")
+                                return;
+                            };
                             if(!addPrefer(prefer)) alert("이미 입력된 항목입니다.");
                             setPrefer('');
                             setIsEdited(true);
@@ -217,39 +225,7 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                             ))}
                         </div>
                     </div>
-                </div>
-                <div className={styles.user__dislike}>
-                    <div className={styles.labeledBox}>
-                        <span className={styles.boxLabel}>비선호재료/음식</span>
-                        <div className={styles.user__input}>
-                            <input 
-                                type="text" 
-                                placeholder="싫어하는 재료나 음식을 입력하세요." 
-                                value={dislike}
-                                onChange={(e) => {
-                                    setDislike(e.target.value);
-                                    setIsEdited(true);
-                                }}
-                            />
-                        </div>
-                        <button className={styles.checkButton} onClick={() => {
-                            if(!addDislike(dislike)) alert("이미 입력된 항목입니다.");
-                            setDislike('');
-                            setIsEdited(true);
-                        }}>확인</button>
-                        <div className={styles.infoBox}>
-                            {dislikeList.map((item, index) => (
-                                <div className={styles.item} key={index}>
-                                    {item}
-                                    <button className={styles.deleteBtn} onClick={() => {
-                                        removeDislike(index);
-                                        setIsEdited(true);
-                                    }}>x</button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                </div>  
                 <button className={styles.editButton} onClick={handleEdit}> 수정하기 </button>
             </div>
             {showAlert && (

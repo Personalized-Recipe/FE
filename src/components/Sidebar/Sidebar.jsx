@@ -5,6 +5,7 @@ import { sortByCreatedAt } from "../../utils/sort";
 
 function Sidebar({chatRooms, onSelectChat, onCreateChatRoom, showIngredient, ingredients}) {
     const [sortOrder, setSortOrder] = useState("recent");
+    
 
     const handleSort = () => {
         const newOrder = sortOrder === "recent" ? "oldest" : "recent";
@@ -30,8 +31,8 @@ function Sidebar({chatRooms, onSelectChat, onCreateChatRoom, showIngredient, ing
                             </div>
                         </div>
                         <div className={styles.MyIngreContainer__content}>
-                            {sortedIngredients.map((item, idx) => (
-                                <div className={styles.item} key={idx}>
+                            {sortedIngredients.map((item) => (
+                                <div className={styles.item} key={item.createdAt}>
                                     {item.name} - {item.amount} {item.unit}
                                 </div>
                             ))} 
