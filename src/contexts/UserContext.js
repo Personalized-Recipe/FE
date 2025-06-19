@@ -6,8 +6,8 @@ const UserContext = createContext({
         gender: '',
         healthList: [],
         allergyList: [],
-        preferList: [],
-        dislikeList: []
+        preferList: []
+        // dislikeList: []
     },
     dispatch: () => {}
 });
@@ -31,8 +31,8 @@ export const UserProvider = ({ children }) => {
     gender: '',
     healthList: [],
     allergyList: [],
-    preferList: [],
-    dislikeList: []
+    preferList: []
+    // dislikeList: []
   });
 
   return (

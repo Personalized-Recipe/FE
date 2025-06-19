@@ -8,7 +8,7 @@ function MyRecipe() {
     }
 
     const [selected, setSelected] = useState(null);
-    const [myRecipes, ,removeRecipe,] = useList(stored());
+    const [myRecipes, , ,removeRecipe,] = useList(stored(),['id']);
 
     useEffect(() => {
         localStorage.setItem("myRecipes", JSON.stringify(myRecipes));

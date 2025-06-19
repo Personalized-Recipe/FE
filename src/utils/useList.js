@@ -1,11 +1,15 @@
 import { useState } from "react";
 
-function isEqual(a, b) {
-    return JSON.stringify(a, Object.keys(a).sort()) === JSON.stringify(b, Object.keys(b).sort());
-}
-
-function useList(initial = []) {
+function useList(initial = [], compareKeys = null) {
     const [list, setList] = useState(initial);
+
+    const isEqual = (a, b) => {
+        if (compareKeys === null) {
+            // 기본 전체 객체 비교 (fallback)
+            return JSON.stringify(a) === JSON.stringify(b);
+        }
+        return compareKeys.every(key => a[key] === b[key]);
+    };
 
     const addItem = (value) => {
         // null/undefined 방어
@@ -22,6 +26,10 @@ function useList(initial = []) {
         return true;
     };
 
+    const updateItem = (index, value) => {
+        setList(list.map((item, i) => i === index ? value : item));
+    };
+
     const removeItem = (index) => {
         setList(list.filter((_, i) => i !== index ));
     };
@@ -30,7 +38,7 @@ function useList(initial = []) {
         setList([]);
     };
     
-    return [list, addItem, removeItem, clear];
+    return [list, addItem, updateItem, removeItem, clear];
 };
 
 export default useList;
