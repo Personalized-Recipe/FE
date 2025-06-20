@@ -37,6 +37,14 @@ export const useChat = () => {
     return newRoom;
   }
 
+  // 채팅방 제목 변경
+  const updateChatTitle = (roomId, newTitle) => {
+    setChatRooms(prevRooms => prevRooms.map(room => 
+        room.id === roomId ? { ...room, title: newTitle } : room
+    ));
+};
+
+
   // 메세지 전송
   const sendMessage = (roomId) => {
     const trimmed = input.trim();
@@ -86,7 +94,8 @@ export const useChat = () => {
     isLoadingRecipe, setIsLoadingRecipe,
     chatRooms, setChatRooms,
     createChatRoom,
-    sendMessage
+    sendMessage,
+    updateChatTitle
   };
 };
 

@@ -14,7 +14,8 @@ function Main() {
         isLoadingRecipe, setIsLoadingRecipe,
         sendMessage,
         createChatRoom,
-        chatRooms
+        chatRooms,
+        updateChatTitle
     } = useChat();
 
     const { ingredients, handleIngredient } = useIngre();
@@ -57,6 +58,7 @@ function Main() {
                     onSelectChat={handleSelectChat} 
                     chatRooms={chatRooms}
                     onCreateChatRoom={handleCreateChatRoom}
+                    onUpdateTitle={updateChatTitle}
                 />
                 <div className={styles.main__chat}>
                     <ChatWindow 

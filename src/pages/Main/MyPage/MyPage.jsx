@@ -45,9 +45,10 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
         if (user) {
         setAge(user.age || '');
         setGender(user.gender || '');
-        setHealth(user.healthList || []);
-        setAllergy(user.allergyList || []);
-        setPrefer(user.preferList || []);
+        setIsPregnant(user.isPregnant || '');
+        setHealth('');
+        setAllergy('');
+        setPrefer('');
         }
     }, [user]);
 
