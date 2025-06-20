@@ -11,18 +11,17 @@
 }
 
 .logout__buttons {
-    // background-color: aqua;
     display: flex;
     gap: 20px;
 }
 
 .logout__confirm {
-    border: 1px solid black;
+    border: 1px solid rgb(196, 196, 196);
     border-radius: 10px;
 }
 
 
 .logout__cancel {
-    border: 1px solid black;
+    border: 1px solid #ffdddd;
     border-radius: 10px;
 }
