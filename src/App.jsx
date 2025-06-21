@@ -7,7 +7,10 @@ import MyPage from "./pages/Main/MyPage/MyPage";
 import MyRecipe from "./pages/Main/MyRecipe/MyRecipe";
 import Logout from "./pages/Main/Logout/Logout";
 import ModalWrapper from "./components/ModalWrapper/ModalWrapper";
+import OauthCallback from "./pages/Home/Login/OauthCallback"; // 이미 import 되어 있음
 import "./App.scss";
+
+
 
 function App() {
   const location = useLocation();
@@ -29,6 +32,7 @@ function App() {
       <Routes location={background || location}>
           <Route path="/" element={<Home />} />
           <Route path="/main" element={<Main />} />
+          <Route path="/oauth/callback/:provider" element={<OauthCallback />} /> {/* 이 줄 추가 */}
       </Routes>
 
       {/* 모달 오버레이 조건 */}
