@@ -173,7 +173,7 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                             if (!allergy.trim()) {
                                 alert("입력된 항목이 없습니다.")
                                 return;
-                            };
+                            }
                             if(!addAllergy(allergy)) alert("이미 입력된 항목입니다.");
                             setAllergy('');
                             setIsEdited(true);
@@ -209,7 +209,7 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                             if (!prefer.trim()) {
                                 alert("입력된 항목이 없습니다.")
                                 return;
-                            };
+                            }
                             if(!addPrefer(prefer)) alert("이미 입력된 항목입니다.");
                             setPrefer('');
                             setIsEdited(true);
