@@ -1,0 +1,116 @@
+.background {
+    position: fixed; /* 화면 기준으로 고정 */
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    z-index: 2;
+}
+
+.login {
+    position: absolute;
+    bottom: 0px;
+    background-color: #ffffff;
+    width: 500px;
+    height: 650px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.h1 {
+    position: absolute;
+    top: 30px;
+    left: 50px;
+    font-weight: 900;
+    font-size: 50px;
+    letter-spacing: 5px;
+}
+
+.p {
+    position: absolute;
+    top: 120px;
+    left: 50px;
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: 3px;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    left: 425px;
+
+    &:hover {
+        color: black;
+    }
+}
+
+.loginImg {
+    position: absolute;
+    width: 400px;
+    height: auto;
+    top: 70px;
+    left: 200px;
+}
+
+.secImg {
+    position: absolute;
+    width: 190px;
+    height: auto;
+    left: 155px;
+    top: 350px;
+}
+
+.kakaoImg {
+    position: absolute;
+    width: 370px;
+    height: auto;
+    left: 65px;
+    top: 400px;
+    cursor: pointer;
+}
+
+.googleBtn {
+    position: absolute;
+    top: 470px;
+    left: 65px;
+    width: 370px;
+    height: 45px;
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: "Roboto", sans-serif;
+
+    &:hover {
+        background-color: #f7f7f7;
+    }
+}
+
+.googleContent {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    width: 100%;
+    padding-left: 15px; /* 텍스트가 너무 붙지 않게 여백 */
+}
+
+.googleLogo {
+    width: 25px;
+    height: 25px;
+    margin-right: 35px;
+
+}
+
+.googleText {
+    font-size: 19.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #3c4043;
+}

@@ -1,0 +1,261 @@
+.modal-background {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100vw;
+  height: calc(100% - 60px);
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.nickname,
+.age,
+.gender,
+.pregnant,
+.health_status,
+.allergy,
+.preferred {
+  // height: 350px; /* 원하는 높이 조절 */
+  padding: 20px;
+}
+
+/* 타이틀 */
+.nick-title,
+.age-title,
+.gender-title,
+.pregnant-title,
+.health-status-title,
+.allergy-title,
+.preferred-title {
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: auto;
+}
+
+.allergy-main {
+  width: 370px;
+  height: 320px;
+  margin: 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e1e1e1;
+}
+
+.nick-main,
+.age-main,
+.gender-main,
+.pregnant-main,
+.health-main,
+.prefer-main{
+  width: 370px;
+  height: 320px;
+  margin: 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #dadada;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.nick-label {
+  width: 200px;
+  height: 100px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.nick-input, .age-input, .health-input , .prefer-input {
+  width: 300px;
+  height: 40px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  text-indent: 10px;
+
+  /* 파이어폭스 */
+  [type=number] {
+    -moz-appearance: textfield;
+  }
+}
+
+.nick-input:focus {
+  border-color: #0070ff;
+  box-shadow: 0 0 0 2px rgba(0, 112, 255, 0.2);
+}
+
+.gender-button, .pregnant-button {
+  width: 200px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  text-wrap: nowrap;
+}
+
+.gender-button:hover {
+  border-color: #ff93cf;
+}
+
+.gender-button.selected {
+  background-color: #ff93cf;
+  color: white;
+  border-color: #ff93cf;
+}
+
+.pregnant-button:hover {
+  border-color: #0070ff;
+}
+
+.pregnant-button.selected {
+  background-color: #0070ff;
+  color: white;
+  border-color: #0070ff;
+}
+
+.health-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.health-input:focus {
+  border-color: #0070ff;
+  box-shadow: 0 0 0 2px rgba(0, 112, 255, 0.2);
+}
+
+.char-count {
+  font-size: 12px;
+  color: #888;
+  align-self: flex-end;
+}
+
+.allergy-button {
+  height: 40px;
+  width: 89px;
+  margin: 6.6px;
+  background-color: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.allergy-button.selected {
+  background-color: #0070ff;
+  color: white;
+  border-color: #0070ff;
+}
+
+.allergy-button:hover {
+  opacity: 0.9;
+}
+
+.prefer-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+// .prefer-input {
+//   padding: 10px 14px;
+//   font-size: 15px;
+//   border: 1px solid #ccc;
+//   border-radius: 8px;
+//   outline: none;
+// }
+
+.prefer-input:focus {
+  border-color: #0070ff;
+  box-shadow: 0 0 0 2px rgba(0, 112, 255, 0.2);
+}
+
+.prefer-count {
+  font-size: 12px;
+  color: #888;
+  align-self: flex-end;
+}
+
+/* 공통 버튼 스타일 */
+.nick-after,
+.age-after,
+.gender-after,
+.preg-after,
+.health-after,
+.allergy-after,
+.prefer-after,
+.nick-before,
+.age-before,
+.gender-before,
+.preg-before,
+.health-before,
+.allergy-before,
+.prefer-before {
+  display: inline-block;
+  width: 110px;
+  height: 35px;
+  margin: 4px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 선택된 상태 스타일 */
+.nick-after,
+.age-after,
+.gender-after,
+.preg-after,
+.health-after,
+.allergy-after,
+.prefer-after {
+  background-color: #0070ff;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 112, 255, 0.3);
+}
+
+.nick-after:hover,
+.age-after:hover,
+.gender-after:hover,
+.preg-after:hover,
+.health-after:hover,
+.allergy-after:hover,
+.prefer-after:hover{
+  background-color: #005bd1;
+}
+
+/* 선택 전 상태 스타일 */
+.age-before,
+.gender-before,
+.preg-before,
+.health-before,
+.allergy-before,
+.prefer-before {
+  background-color: white;
+  border: 1px solid #efefef;
+  color: #000000;
+}
+.age-before:hover,
+.gender-before:hover,
+.preg-before:hover,
+.health-before:hover,
+.allergy-before:hover,
+.prefer-before:hover {
+  background-color: #f0f0f0;
+}
