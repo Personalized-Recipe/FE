@@ -9,6 +9,7 @@ import Logout from "./pages/Main/Logout/Logout";
 import ModalWrapper from "./components/ModalWrapper/ModalWrapper";
 import OauthCallback from "./pages/Home/Login/OauthCallback"; // 이미 import 되어 있음
 import New from  "./components/NewUser/NewUser";
+import Exp from "./components/Experience/Experience";
 import "./App.scss";
 
 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/main" element={<Main />} />
           <Route path="/new" element={<New />} />
+          <Route path="/exp" element={<Exp />} />
           <Route path="/oauth/callback/:provider" element={<OauthCallback />} /> {/* 이 줄 추가 */}
       </Routes>
 
