@@ -21,7 +21,7 @@ function Navbar({ onClickLogin }) {
                     저장한 레시피의 정보를 한 눈에 볼 수 있어요
                     </div>
                 </button>
-                <button className={styles["hover-area"]}onClick={() => navigate("/MyIngre", { state: { background: location } })}>
+                <button className={styles["hover-area"]} onClick={() => navigate("/MyIngre", { state: { background: location } })}>
                     내 재료
                     <div className={styles["tooltip"]}>
                     냉장고에 있는 재료를 기록할 수 있어요

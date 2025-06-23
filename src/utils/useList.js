@@ -39,6 +39,6 @@ function useList(initial = [], compareKeys = null) {
     };
     
     return [list, addItem, updateItem, removeItem, clear];
-};
+}
 
 export default useList;

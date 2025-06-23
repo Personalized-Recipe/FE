@@ -24,7 +24,7 @@ function ChatInput({input, setInput, onSend, onToggleIngredient}) {
                         e.preventDefault();
                         onSend();
                         }
-;                   }}
+                   }}
                 placeholder="메세지를 입력하세요." 
             />
             <button onClick={onSend}>전송</button>

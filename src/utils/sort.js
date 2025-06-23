@@ -8,4 +8,4 @@ export function sortByCreatedAt (items, order = "recent")  {
       sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     }
     return sorted;
-  };
+  }
