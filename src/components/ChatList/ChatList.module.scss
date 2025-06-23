@@ -1,0 +1,35 @@
+.chatList {
+    overflow-y: auto;
+}
+
+.room {
+    border-radius: 20px;
+    height: 40px;
+    width: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 0;
+    margin: 5px 0;
+}
+
+.room:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.room__titleInput {
+    border: 1px solid #fcefef;
+    flex: 1;
+    padding: 5px 0;
+    height: 40px;
+    border-radius: 20px;
+
+    &:focus {
+    background-color: #f4f4f4;
+    text-align: center;
+    outline: none;
+    font-size: 16px;
+  }
+
+}
