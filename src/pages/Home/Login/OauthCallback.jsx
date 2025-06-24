@@ -10,11 +10,11 @@ const OauthCallback = () => {
     const isProcessing = useRef(false);
 
     useEffect(() => {
-        // 중복 요청 방지
         if (isProcessing.current) return;
         isProcessing.current = true;
 
-        localStorage.removeItem("jwt"); // 기존 토큰 삭제
+        localStorage.removeItem("jwt");
+
         const query = new URLSearchParams(location.search);
         const code = query.get("code");
         const error = query.get("error");
@@ -27,16 +27,32 @@ const OauthCallback = () => {
 
         if (code && provider) {
             console.log("OAuth 요청 시작:", { provider, code: code.substring(0, 10) + "..." });
-            
-            axios.post(`/api/oauth/${provider}/callback`, { code })
+
+            axios
+                .post(`/api/oauth/${provider}/callback`, { code })
                 .then((res) => {
-                    console.log("OAuth 응답 성공:", res.status);
-                    if (res.data && res.data.token) {
-                        localStorage.setItem("jwt", res.data.token);
+                    if (res.data && res.data.token && res.data.userId) {
+                        const { token, userId } = res.data;
+                        localStorage.setItem("jwt", token);
                         alert("로그인 성공!");
-                        navigate("/main");
+
+                        // 사용자 프롬프트 존재 여부 확인
+                        axios
+                            .get(`/api/users/${userId}/prompt`, {
+                                headers: { Authorization: `Bearer ${token}` },
+                            })
+                            .then((promptRes) => {
+                                if (promptRes.data && promptRes.data.id) {
+                                    navigate("/main");
+                                } else {
+                                    navigate("/new-user");
+                                }
+                            })
+                            .catch(() => {
+                                navigate("/new-user");
+                            });
                     } else {
-                        throw new Error("토큰이 없습니다");
+                        throw new Error("응답에 토큰이나 사용자 ID가 없습니다");
                     }
                 })
                 .catch((err) => {
