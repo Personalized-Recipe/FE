@@ -5,8 +5,8 @@
 
 .room {
     border-radius: 20px;
-    height: 40px;
-    width: 260px;
+    height: 37px;
+    width: 220px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,6 +17,7 @@
 .room:hover {
     background-color: #f0f0f0;
     cursor: pointer;
+
 }
 
 .room__titleInput {

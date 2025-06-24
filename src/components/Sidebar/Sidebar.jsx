@@ -28,7 +28,7 @@ function Sidebar({chatRooms, onSelectChat, onCreateChatRoom, showIngredient, ing
                 {showIngredient ? (
                     <div className={styles.MyIngreContainer}>
                         <div className={styles.MyIngreContainer__header}>
-                            냉장고 재료
+                            <p>냉장고 재료</p>
                             <div className={styles.sortButton} onClick={handleSort}>
                                 {sortOrder === "recent" ? "최신순" : "오래된순"}
                             </div>
