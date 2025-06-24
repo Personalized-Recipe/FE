@@ -21,7 +21,6 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080', // 백엔드 서버 주소
         changeOrigin: true,              // CORS 해결
-        rewrite: (path) => path.replace(/^\/api/, ''), // /api 제거
       },
     },
   },
