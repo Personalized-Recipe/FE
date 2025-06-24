@@ -1,23 +1,24 @@
 .chatList {
     overflow-y: auto;
     max-height: 580px;
+    width: 100%;
 }
 
 .room {
     border-radius: 20px;
     height: 37px;
-    width: 220px;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 5px 0;
     margin: 5px 0;
+
 }
 
 .room:hover {
     background-color: #f0f0f0;
     cursor: pointer;
-
 }
 
 .room__titleInput {
@@ -25,7 +26,6 @@
     flex: 1;
     padding: 5px 0;
     height: 40px;
-    border-radius: 20px;
 
     &:focus {
     background-color: #f4f4f4;
