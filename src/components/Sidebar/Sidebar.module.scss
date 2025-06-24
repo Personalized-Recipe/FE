@@ -37,6 +37,11 @@
         background-color: #e1f0ff;
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
+        gap: 20%;
+
+        p {
+            margin-left: 20%;
+        }
     }
 
     .MyIngreContainer__content {
@@ -51,25 +56,18 @@
 
     .sortButton {
     display: flex;
-    width: 60px;
-    height: 30px;
-    border-radius: 10px;
-    border: none;
-    background: #0070ff;
     align-items: center;
     justify-content: center;
-    border-bottom: #a2a2a2 1px solid;
     cursor: pointer;
-    margin-left: 10px;
 }
 
     .item {
         display: flex;
         height: 15px;
-        width: 75%;
+        width: 80%;
         flex-shrink: 0;
-        background: #e1f0ff;
-        border: 1px solid rgb(241, 241, 241);
+        background: #eaeaea;
+        border: 1px solid rgb(248, 248, 248);
         //box-shadow: 0 4px 12px 0 rgb(238, 238, 238);
         border-radius: 16px;
         justify-content: center;
@@ -102,6 +100,7 @@
 }
 
 .createChatBtn:hover {
-    background-color: #e1f0ff;
+    background-color: #0070ff;
+    color: white;
 }
 

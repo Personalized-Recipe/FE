@@ -22,8 +22,11 @@
     display: flex;
     align-items: center;
     padding: 10px;
+    padding-left: 35px;
     border-bottom: 1px solid rgb(243, 243, 243);
     position: fixed;
+    font-size: 19px;
+    font-weight: 600;
 }
 
 .chatWindow__content {

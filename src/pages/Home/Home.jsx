@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import Login from './Login/Login.jsx';
+import Exp from  '../../components/Experience/Experience.jsx';
 import './Home.scss';
 
 function Home() {
     const [showLogin, setShowLogin] = useState(false);
+    const [showExp, setShowExp] = useState(false);
 
     const handleLoginClick = () => {
     setShowLogin(true);
     }
     const handleCloseLogin = () => {
     setShowLogin(false);
+    }
+    const handleExpClick = () => {
+        setShowExp(true);
     }
 
     useEffect(() => {
@@ -19,6 +24,10 @@ function Home() {
             document.body.style.overflow = 'auto'; // 혹시라도 깔끔하게 정리
         };
     }, [showLogin]);
+
+    if (showExp) {
+        return <Exp />;
+    }
 
   return (
     <div className="Home">
@@ -50,7 +59,9 @@ function Home() {
             <p className="subtitle">
                 일반적인 상담이 아닌 {'\u00a0'}‘나’{'\u00a0'} 를 위한 개인 영양사
             </p>
-            <button className="action-button">나만의 레시피 체험해보기</button>
+            <button className="action-button" onClick={handleExpClick}>
+                나만의 레시피 체험해보기
+            </button>
         </div>
         <div className="etc">
             <div className="footer-links">
