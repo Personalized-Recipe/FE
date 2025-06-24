@@ -4,14 +4,14 @@ function Login({ onClose }) {
   // 카카오 로그인 핸들러
   const handleKakaoLogin = () => {
     const KAKAO_AUTH_URL =
-        `https://kauth.kakao.com/oauth/authorize?client_id=8d1a49c1f2fd8b21467e79cea3bcaddd&redirect_uri=http://localhost:3000/oauth/callback/kakao&response_type=code&prompt=login`;
+        `https://kauth.kakao.com/oauth/authorize?client_id=8d1a49c1f2fd8b21467e79cea3bcaddd&redirect_uri=http://localhost:5173/oauth/callback/kakao&response_type=code&prompt=login`;
     window.location.href = KAKAO_AUTH_URL;
   };
 
   // 구글 로그인 핸들러
   const handleGoogleLogin = () => {
     const GOOGLE_CLIENT_ID = "63236188444-1b0qiaf7a6bskuasp986ah7gtodsl8c0.apps.googleusercontent.com";
-    const REDIRECT_URI = "http://localhost:3000/oauth/callback/google";
+    const REDIRECT_URI = "http://localhost:5173/oauth/callback/google";
     const GOOGLE_AUTH_URL =
         `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=email profile`;
     window.location.href = GOOGLE_AUTH_URL;

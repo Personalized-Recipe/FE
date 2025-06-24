@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react";
 import styles from "./MyPage.module.scss";
 import useList from "../../../utils/useList";
 import { useUser } from "../../../contexts/UserContext";
+import axios from "axios";
+
+// 프로필 이미지 유효성 검사 및 기본값 처리 함수
+const getValidProfileImage = (imageUrl) => {
+    if (!imageUrl || imageUrl.trim() === "" || imageUrl === "null" || imageUrl === "undefined") {
+        return "/basic.png";
+    }
+    return imageUrl;
+};
 
 function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     const { user, dispatch} = useUser();
@@ -9,6 +18,8 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     const [gender, setGender] = useState(user.gender); 
     const [isPregnant, setIsPregnant] = useState(""); 
     const [age, setAge] = useState(user.age);
+    const [nickname, setNickname] = useState("");
+    const [profileImage, setProfileImage] = useState("/basic.png");
 
     const [health, setHealth] = useState("");
     const [allergy, setAllergy] = useState("");
@@ -40,18 +51,55 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
         console.log("수정하기 버튼 클릭")
     };
 
-    // 전역 상태 user가 바뀔 때마다 localUser 업데이트
+    // 컴포넌트 마운트 시 사용자 정보 및 프로필 정보 가져오기
     useEffect(() => {
-        if (user) {
-        setAge(user.age || '');
-        setGender(user.gender || '');
-        setIsPregnant(user.isPregnant || '');
-        setHealth('');
-        setAllergy('');
-        setPrefer('');
-        }
-    }, [user]);
+        const fetchUserProfile = async () => {
+            try {
+                const token = localStorage.getItem("jwt");
+                
+                if (token) {
+                    const response = await axios.get(`/api/users/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    const userData = response.data;
+                    setNickname(userData.nickname || "사용자");
+                    
+                    // 프로필 이미지 처리
+                    const validProfileImage = getValidProfileImage(userData.profileImage);
+                    setProfileImage(validProfileImage);
+                    
+                    // 전역 상태 업데이트
+                    dispatch({
+                        type: 'UPDATE_USER',
+                        payload: {
+                            ...user,
+                            nickname: userData.nickname,
+                            profileImage: validProfileImage
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("사용자 프로필 가져오기 실패:", error);
+                setNickname("사용자");
+                setProfileImage("/basic.png");
+            }
+        };
 
+        fetchUserProfile();
+
+        // 기존 로직: 전역 상태 user가 바뀔 때마다 localUser 업데이트
+        if (user) {
+            setAge(user.age || '');
+            setGender(user.gender || '');
+            setIsPregnant(user.isPregnant || '');
+            setHealth('');
+            setAllergy('');
+            setPrefer('');
+        }
+    }, [user, dispatch]);
 
     const handleAlertConfirm = () => {
         console.log("alert 클릭");
@@ -63,8 +111,8 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     return (
         <div className={styles.MyPage}>
             <div className={styles.MyPage__header}>
-                <img src="/basic.png" alt="기본 프로필" className={styles.profile}/>
-                <p>홍길동</p>
+                <img src={profileImage} alt={nickname} className={styles.profile}/>
+                <p>{nickname}</p>
             </div>
             <div className={styles.MyPage__content}>
                 <div className={styles.user__age}>
