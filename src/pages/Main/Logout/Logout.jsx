@@ -19,7 +19,7 @@ function Logout() {
     }
     return (
         <div className={styles.logout}>
-            <h1>로그아웃 하시겠습니까?</h1>
+            <h1>👋 로그아웃 하시겠습니까? 👋</h1>
             <div className={styles.logout__buttons}>
                 <button className={styles.logout__confirm} onClick={handleLogout}>네</button>
                 <button className={styles.logout__cancel} onClick={handleCancel}>돌아가기</button>

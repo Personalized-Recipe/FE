@@ -1,7 +1,6 @@
 .container {
     display: flex;
     background:white;
-    border: 1px solid rgb(196, 196, 196);
     border-radius: 20px;
     width: 100%;
     height: 75vh;
@@ -13,7 +12,6 @@
 .inputContainer {
     display: flex;
     width: 30vw;
-    height: 3vh;
     gap: 20px;
     justify-content: center;
 }
@@ -23,15 +21,14 @@
     width: 70%;
     height: 36px;
     border-radius: 10px;
-    border: 1px solid rgb(196, 196, 196);
-    box-shadow: 0 4px 12px 0 rgb(238, 238, 238);
-    padding-left: 10px;
+    border: 1px solid #a2a2a2;
+    text-indent: 10px;
     outline: none;
 }
 
 .searchButton {
-    border: 1px solid #0070ff;
-    box-shadow: 0 4px 12px 0 rgb(238, 238, 238);
+    background-color: #0070ff;
+    color: white;
     width: 15%;
     height: 40px;
     border-radius: 10px;
@@ -47,7 +44,7 @@
     flex-direction: row;
     overflow-y: scroll;
     background: none;
-    border: 1px solid rgb(196, 196, 196);
+    border: 1px solid #a2a2a2;
     box-shadow: 0 4px 12px 0 rgb(238, 238, 238);
 }
 
@@ -78,8 +75,7 @@
     max-width: 150px;
     height: 40px;
     border-radius: 10px;
-    background-color: #ececec;
-    border: none;
+    border: 1px solid #a2a2a2;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -121,8 +117,8 @@
     display: flex;
     width: 80%;
     height: 50px;
-    background-color: rgb(255, 255, 255);
-    border: solid 1px rgb(196, 196, 196);
+    background-color: white;
+    border: solid 1px #a2a2a2;
     border-radius: 15px;
     align-items: center;
     margin: 10px 0 0;
@@ -131,15 +127,25 @@
     padding: 0 10px;
 }
 
+.Item:active {
+    background-color: #e1f0ff;
+    transform: scale(0.97);
+    transition: 0.2s ease;
+}
+
 .deleteBtn {
     position: sticky;
     left: 670px;
-    background-color: #ffdddd;
     width: 40px;
     height: 30px;
     border-radius: 10px;
     white-space: nowrap;
     transition: 0.2s ease;
+    text-decoration: underline;
+}
+
+.deleteBtn:active {
+    color: red;
 }
 
 .editNotice {

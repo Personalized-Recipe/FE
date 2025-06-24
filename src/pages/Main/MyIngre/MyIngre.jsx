@@ -2,13 +2,24 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyIngre.module.scss";
 import useList from "../../../utils/useList";
 
+// 초기값 로드 함수
+const loadInitialIngredients = () => {
+  const saved = localStorage.getItem("MyIngre");
+  if (!saved) return [];
+    // createdAt이 없는 경우 현재 시간으로 채우기
+    return JSON.parse(saved).map(item => ({
+      ...item,
+      createdAt: item.createdAt || new Date().toISOString()
+    }));
+}
+
 function MyIngre() {
   const [input, setInput] = useState("");
   const [amount, setAmount] = useState("");
   const [unit, setUnit] = useState("");
   const [tempName, setTempName] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
-  const [ingredients, addIngredient, updateIngredient, removeIngredient, ] = useList([], ['name', 'amount', 'unit']);
+  const [ingredients, addIngredient, updateIngredient, removeIngredient,, ] = useList(loadInitialIngredients(), ['name', 'amount', 'unit']);
 
   const inputRef = useRef(null);
   const amountRef = useRef(null);
@@ -16,16 +27,6 @@ function MyIngre() {
   const searchBtnRef = useRef(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("MyIngre");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // createdAt이 없는 경우 현재 시간으로 채우기
-      const migrated = parsed.map(item => ({
-        ...item,
-        createdAt: item.createdAt || new Date().toISOString()
-      }));
-      migrated.forEach(item => addIngredient(item));
-    } 
     inputRef.current?.focus();
   }, []);
 
@@ -93,7 +94,7 @@ function MyIngre() {
 
   return (
     <div className={styles.container}>
-      <h2>장바구니</h2>
+      <h2>🥕 장바구니 🥕</h2>
       <div className={styles.inputContainer}>
         <input
           className= {styles.input}

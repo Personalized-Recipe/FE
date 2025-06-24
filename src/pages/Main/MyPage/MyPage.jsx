@@ -149,7 +149,7 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                     <button className={styles.deleteBtn} onClick={() => {
                                         removeHealth(index);
                                         setIsEdited(true);
-                                    }}>x</button>
+                                    }}>삭제</button>
                                 </div>
                             ))}
                         </div>
@@ -185,7 +185,7 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                     <button className={styles.deleteBtn} onClick={() => {
                                         removeAllergy(index);
                                         setIsEdited(true);
-                                    }}>x</button>
+                                    }}>삭제</button>
                                 </div>
                             ))}
                         </div>
@@ -221,7 +221,7 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                     <button className={styles.deleteBtn} onClick={() => {
                                         removePrefer(index);
                                         setIsEdited(true);
-                                    }}>x</button>
+                                    }}>삭제</button>
                                 </div>
                             ))}
                         </div>
