@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./MyPage.module.scss";
 import useList from "../../../utils/useList";
-import { useUser } from "../../../contexts/UserContext";
+import { useUser } from "../../../contexts/UserContext.jsx";
 
 function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     const { user, dispatch} = useUser();
