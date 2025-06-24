@@ -77,11 +77,11 @@ function Recipe() {
             <div className={styles.recipe__content}>
                 {selected !== null && recipes[selected] ? (
                     <>
-                        <h2>{recipes[selected].title}</h2>
+                        {/* <h2>{recipes[selected].title}</h2> */}
                         <div className={styles.recipeDetail}>{recipes[selected].content}</div>
                         <div className={styles.buttonRow}>
                             <button onClick={() => setSelected(null)}>뒤로가기</button>
-                            <button onClick={handleSave}>저장하기</button>
+                            <button className={styles.saveBtn} onClick={handleSave}>저장하기</button>
                         </div>
                     </>
                 ) : (
