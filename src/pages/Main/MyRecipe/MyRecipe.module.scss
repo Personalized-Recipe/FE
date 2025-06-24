@@ -47,25 +47,33 @@
 .recipe__list {
     width: 35%;
     overflow-y: scroll;
+    p {
+        width: 200px;
+        font-size: 18px;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 20px;
+        color: #565656;
+    }
 }
 
 .recipe {
     background-color: white;
-    border: #ececec 1px solid;
+    border: #a2a2a2 1px solid;
     padding: 18px;
-    margin: 3px 14px;
+    margin: 3px 20px;
     border-radius: 15px;
+    transition: transform 0.2s ease-in-out;
 }
 
 .active {
-    background-color: #ffead0;
-    border-color: #ccc;
     transform: scale(1.02);
+    background-color: #e1f0ff;
 }
 
 .recipe__info {
-    background-color: #f4f9ff;
-    border: #0070ff 1px solid;
+    background-color: white;
+    border: #a2a2a2 1px solid;
     width: 100%;
     max-width: 400px;
     border-radius: 20px;
@@ -85,6 +93,10 @@
     height: 30px;
     bottom: 60px;
     border-radius: 10px;
-    border: #ffc1c1 1px solid;
-    background-color: #ffdddd;
+    background-color: #0070ff;
+    color: white;
+}
+
+.recipe-delete:active {
+    transform: scale(0.95);
 }

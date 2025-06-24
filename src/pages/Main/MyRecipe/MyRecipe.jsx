@@ -23,10 +23,10 @@ function MyRecipe() {
 
     return(
         <div className={styles.myrecipe}>
-            <p className={styles.myrecipe__header}>나의 레시피 북</p>
+            <p className={styles.myrecipe__header}>📖 나의 레시피 북 📖</p>
             <div className={styles.myrecipe__content}>
                 <div className={styles.recipe__list}>{myRecipes.length === 0 ? (
-                        <p>저장된 레시피가 없습니다.</p>
+                        <p>저장된 레시피가 없습니다. 레시피를 추가해보세요!</p>
                     ) : (
                         myRecipes.map((r, idx) => (
                             <div className={`${styles.recipe} ${selected === idx ? styles.active : ''}`} 
@@ -46,7 +46,7 @@ function MyRecipe() {
                             <button className={styles["recipe-delete"]} onClick={handleDelete}>내 레시피 북에서 지우기</button>
                         </>
                     ) : (
-                        <p>레시피를 선택하세요.</p>
+                        <p>레시피를 선택하세요🕴️🕴️</p>
                     )}
                 </div>
             </div>

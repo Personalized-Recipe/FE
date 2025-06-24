@@ -10,7 +10,7 @@ function ModalWrapper({ children, handleClose }) {
                  <button className={styles.modalClose} onClick={() => {
                     handleClose();
                     console.log("모달 닫기 버튼 클릭")
-                 }}>X</button>
+                 }}>닫기</button>
                 {children}
             </div>
         </div>,
