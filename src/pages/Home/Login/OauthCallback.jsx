@@ -13,7 +13,9 @@ const OauthCallback = () => {
         if (isProcessing.current) return;
         isProcessing.current = true;
 
-        localStorage.removeItem("jwt");
+        // 로그인 전에 localStorage 완전 정리 (이전 사용자의 모든 데이터 제거)
+        localStorage.clear();
+        console.log("=== 로그인 전 localStorage 완전 정리 완료 ===");
 
         const query = new URLSearchParams(location.search);
         const code = query.get("code");
@@ -108,7 +110,13 @@ const OauthCallback = () => {
                     localStorage.setItem("userId", userId);
                     if (username) localStorage.setItem("username", username);
                     if (profileImage) localStorage.setItem("profileImage", profileImage);
+                    
+                    // 이전 사용자의 채팅방 정보 초기화
+                    localStorage.removeItem("chatRooms");
+                    localStorage.removeItem("currentRoomId");
+                    
                     console.log("JWT 토큰 및 사용자 정보 저장 완료");
+                    console.log("이전 사용자의 채팅방 정보 초기화 완료");
                     
                     alert("로그인 성공!");
 

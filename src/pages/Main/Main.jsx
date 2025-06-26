@@ -39,13 +39,19 @@ function Main() {
 
     // 새 채팅방 생성
     const handleCreateChatRoom = () => {
-        createChatRoom();
+        console.log("=== 채팅방 생성 버튼 클릭 ===");
+        console.log("현재 채팅방 개수:", chatRooms.length);
+        console.log("현재 선택된 채팅방 ID:", currentRoomId);
+        
+        const newRoom = createChatRoom();
+        console.log("생성된 새 채팅방:", newRoom);
+        console.log("=== 채팅방 생성 완료 ===");
     };
 
     // 채팅 메시지 전송
     const handleSend = () => {
-        sendMessage(currentRoomId);
-        console.log("채팅 전송")
+        sendMessage(currentRoomId, showIngredient);
+        console.log("채팅 전송, 냉장고 사용:", showIngredient);
     }
 
     return (
