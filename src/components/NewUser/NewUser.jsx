@@ -27,22 +27,62 @@ const NewUser = () => {
 
     const handleSubmitPrompt = async () => {
         const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem("jwt");
+        const username = localStorage.getItem("username");
+        
+        console.log("=== 프롬프트 저장 시작 ===");
+        console.log("사용자 ID:", userId);
+        console.log("JWT 토큰 존재:", !!token);
+        console.log("OAuth username:", username);
+        
         const promptData = {
+            name: username,
             nickname,
             age,
-            gender: selectedGender,
+            gender: selectedGender === "male" ? "M" : selectedGender === "female" ? "F" : null,
             pregnant: pregnantStatus,
             allergy: selectedAllergies.join(", "),
             health: healthInfo,
             preference: preferFood
         };
 
+        console.log("프롬프트 데이터:", promptData);
+        console.log("요청 URL:", `/api/users/${userId}/prompt`);
+
         try {
-            await axios.post(`/api/users/${userId}/prompt`, promptData);
+            const response = await axios.post(`/api/users/${userId}/prompt`, promptData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            console.log("=== 프롬프트 저장 성공 ===");
+            console.log("응답 상태:", response.status);
+            console.log("응답 데이터:", response.data);
+            
             alert("프롬프트 정보가 성공적으로 저장되었습니다!");
+            // 메인 페이지로 이동
+            window.location.href = "/main";
         } catch (error) {
-            console.error("프롬프트 저장 실패:", error);
-            alert("프롬프트 저장에 실패했습니다.");
+            console.error("=== 프롬프트 저장 실패 ===");
+            console.error("에러 상태:", error.response?.status);
+            console.error("에러 상태 텍스트:", error.response?.statusText);
+            console.error("에러 데이터:", error.response?.data);
+            console.error("에러 메시지:", error.message);
+            console.error("요청 헤더:", error.config?.headers);
+            console.error("요청 URL:", error.config?.url);
+            console.error("요청 데이터:", error.config?.data);
+            
+            if (error.response?.status === 403) {
+                alert("권한이 없습니다. 로그인을 다시 시도해주세요.");
+            } else if (error.response?.data?.error?.includes("Duplicate entry")) {
+                alert("이미 사용자 정보가 저장되어 있습니다. 메인 페이지로 이동합니다.");
+                // 메인 페이지로 이동
+                window.location.href = "/main";
+            } else {
+                alert("프롬프트 저장에 실패했습니다.");
+            }
         }
     };
 
@@ -61,6 +101,11 @@ const NewUser = () => {
                                 maxLength={10}
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && nickname.trim()) {
+                                        setStep(1);
+                                    }
+                                }}
                                 placeholder="닉네임(최대 10자)"
                                 className="nick-input"
                             />
@@ -82,6 +127,11 @@ const NewUser = () => {
                                 placeholder="숫자로 입력하세요"
                                 value={age}
                                 onChange={(e) => setAge(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && age.trim()) {
+                                        setStep(2);
+                                    }
+                                }}
                             />
                         </div>
                         <button className="gender-before" onClick={() => setStep(0)}>이전</button>
@@ -90,7 +140,11 @@ const NewUser = () => {
                 )}
 
                 {step === 2 && (
-                    <div className="gender">
+                    <div className="gender" onKeyDown={(e) => {
+                        if (e.key === 'Enter' && selectedGender) {
+                            setStep(3);
+                        }
+                    }}>
                         <div className="gender-title">성별을 입력해주세요.</div>
                         <div className="gender-main">
                             <button
@@ -112,7 +166,11 @@ const NewUser = () => {
                 )}
 
                 {step === 3 && (
-                    <div className="pregnant">
+                    <div className="pregnant" onKeyDown={(e) => {
+                        if (e.key === 'Enter' && pregnantStatus) {
+                            setStep(4);
+                        }
+                    }}>
                         <div className="pregnant-title">임신 여부를 체크해주세요.</div>
                         <div className="pregnant-main">
                             <button
@@ -144,6 +202,11 @@ const NewUser = () => {
                                 maxLength={50}
                                 placeholder="예: 천식이 있어요"
                                 onChange={(e) => setHealthInfo(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        setStep(5);
+                                    }
+                                }}
                                 className="health-input"
                             />
                             <div className="char-count">{healthInfo.length} / 50</div>
@@ -154,7 +217,11 @@ const NewUser = () => {
                 )}
 
                 {step === 5 && (
-                    <div className="allergy">
+                    <div className="allergy" onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            setStep(6);
+                        }
+                    }}>
                         <div className="allergy-title">알러지를 선택해주세요.</div>
                         <div className="allergy-main">
                             {allergyOptions.map((item) => (
@@ -183,6 +250,11 @@ const NewUser = () => {
                                 maxLength={100}
                                 placeholder="예: 파스타, 연어, 단백한 음식"
                                 onChange={(e) => setPreferFood(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSubmitPrompt();
+                                    }
+                                }}
                                 className="prefer-input"
                             />
                             <div className="prefer-count">{preferFood.length} / 100</div>

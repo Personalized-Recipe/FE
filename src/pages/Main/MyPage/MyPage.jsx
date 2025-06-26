@@ -65,7 +65,10 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                     });
                     
                     const userData = response.data;
-                    setNickname(userData.nickname || "사용자");
+                    
+                    // nickname이 없으면 localStorage의 username 사용
+                    const displayName = userData.nickname || localStorage.getItem("username") || "사용자";
+                    setNickname(displayName);
                     
                     // 프로필 이미지 처리
                     const validProfileImage = getValidProfileImage(userData.profileImage);
@@ -76,14 +79,16 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                         type: 'UPDATE_USER',
                         payload: {
                             ...user,
-                            nickname: userData.nickname,
+                            nickname: displayName,
                             profileImage: validProfileImage
                         }
                     });
                 }
             } catch (error) {
                 console.error("사용자 프로필 가져오기 실패:", error);
-                setNickname("사용자");
+                // 에러 발생 시에도 localStorage의 username 사용
+                const fallbackName = localStorage.getItem("username") || "사용자";
+                setNickname(fallbackName);
                 setProfileImage("/basic.png");
             }
         };
