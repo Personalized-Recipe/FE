@@ -1,28 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './NewUser.scss';
 import Navbar from "../Navbar/Navbar";
 import axios from 'axios';
 
 const allergyOptions = [
-    "우유", "밀", "땅콩", "알류(가금류)", "메밀", "게",
-    "대두", "새우", "복숭아", "돼지고기", "쇠고기", "토마토",
-    "고등어", "닭고기", "오징어", "조개류", "호두, 잣", "아황산"
+    "복숭아", "키위", "견과류", "우유", "계란", "새우", "게", "오징어", "조개류", "대두", "밀", "메밀", "아황산염", "없음"
 ];
 
 const NewUser = () => {
     const [step, setStep] = useState(0);
     const [nickname, setNickname] = useState("");
     const [age, setAge] = useState("");
-    const [selectedGender, setSelectedGender] = useState(null);
-    const [pregnantStatus, setPregnantStatus] = useState(null);
-    const [selectedAllergies, setSelectedAllergies] = useState([]);
+    const [selectedGender, setSelectedGender] = useState("");
+    const [pregnantStatus, setPregnantStatus] = useState("");
     const [healthInfo, setHealthInfo] = useState("");
+    const [selectedAllergies, setSelectedAllergies] = useState([]);
     const [preferFood, setPreferFood] = useState("");
 
+    // 컴포넌트 마운트 시 개인화 프롬프트 존재 여부 확인
+    useEffect(() => {
+        const checkExistingPrompt = async () => {
+            try {
+                const token = localStorage.getItem("jwt");
+                const userId = localStorage.getItem("userId");
+                
+                if (!token || !userId) {
+                    console.log("JWT 토큰 또는 사용자 ID가 없습니다.");
+                    return;
+                }
+
+                console.log("=== 개인화 프롬프트 존재 여부 확인 ===");
+                console.log("사용자 ID:", userId);
+
+                const response = await axios.get(`/api/users/${userId}/prompt`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log("기존 프롬프트 발견:", response.data);
+                
+                // 기존 프롬프트가 있으면 바로 /main으로 이동
+                if (response.data) {
+                    console.log("개인화 프롬프트가 이미 존재합니다. /main으로 이동합니다.");
+                    window.location.href = "/main";
+                }
+
+            } catch (error) {
+                if (error.response?.status === 404) {
+                    console.log("개인화 프롬프트가 없습니다. 새로 생성합니다.");
+                    // 404 에러는 프롬프트가 없다는 의미이므로 계속 진행
+                } else {
+                    console.error("프롬프트 확인 중 에러:", error);
+                    // 다른 에러는 무시하고 계속 진행
+                }
+            }
+        };
+
+        checkExistingPrompt();
+    }, []);
+
     const toggleAllergy = (item) => {
-        setSelectedAllergies((prev) =>
-            prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-        );
+        if (selectedAllergies.includes(item)) {
+            setSelectedAllergies(selectedAllergies.filter(allergy => allergy !== item));
+        } else {
+            setSelectedAllergies([...selectedAllergies, item]);
+        }
     };
 
     const handleSubmitPrompt = async () => {
