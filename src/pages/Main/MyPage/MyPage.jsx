@@ -35,40 +35,155 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
     };
 
     // 수정하기 버튼
-    const handleEdit = () => {
-        dispatch({
-        type: 'UPDATE_USER',
-        payload: {
-            ...user,
+    const handleEdit = async () => {
+        const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem("jwt");
+        const username = localStorage.getItem("username");
+        
+        console.log("=== MyPage 수정 요청 시작 ===");
+        console.log("사용자 ID:", userId);
+        console.log("JWT 토큰 존재:", !!token);
+        console.log("OAuth username:", username);
+        
+        const promptData = {
+            name: username,
+            nickname: nickname,
             age,
             gender,
-            healthList,
-            allergyList,
-            preferList,
+            pregnant: isPregnant === "예" ? true : false,
+            allergy: allergyList.join(", "),
+            health: healthList.join(", "),
+            preference: preferList.join(", "),
+            isUpdate: true // 수정임을 나타내는 플래그
+        };
+
+        console.log("수정할 프롬프트 데이터:", promptData);
+        console.log("요청 URL:", `/api/users/${userId}/prompt`);
+
+        try {
+            const response = await axios.post(`/api/users/${userId}/prompt`, promptData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            console.log("=== MyPage 수정 성공 ===");
+            console.log("응답 상태:", response.status);
+            console.log("응답 데이터:", response.data);
+            
+            // 전역 상태 업데이트
+            dispatch({
+                type: 'UPDATE_USER',
+                payload: {
+                    ...user,
+                    age,
+                    gender,
+                    healthList,
+                    allergyList,
+                    preferList,
+                }
+            });
+            
+            setIsEdited(false);
+            alert("사용자 정보가 성공적으로 수정되었습니다!");
+            
+        } catch (error) {
+            console.error("=== MyPage 수정 실패 ===");
+            console.error("에러 상태:", error.response?.status);
+            console.error("에러 상태 텍스트:", error.response?.statusText);
+            console.error("에러 데이터:", error.response?.data);
+            console.error("에러 메시지:", error.message);
+            console.error("요청 헤더:", error.config?.headers);
+            console.error("요청 URL:", error.config?.url);
+            console.error("요청 데이터:", error.config?.data);
+            
+            if (error.response?.status === 403) {
+                alert("권한이 없습니다. 로그인을 다시 시도해주세요.");
+            } else {
+                alert("사용자 정보 수정에 실패했습니다.");
+            }
         }
-        });
-        setIsEdited(false)
-        console.log("수정하기 버튼 클릭")
     };
 
-    // 컴포넌트 마운트 시 사용자 정보 및 프로필 정보 가져오기
+    // 컴포넌트 마운트 시 사용자 정보 및 프로필 정보 가져오기 (한 번만 실행)
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
                 const token = localStorage.getItem("jwt");
+                const userId = localStorage.getItem("userId");
                 
                 if (token) {
-                    const response = await axios.get(`/api/users/me`, {
+                    // 1. 기본 사용자 정보 가져오기
+                    const userResponse = await axios.get(`/api/users/me`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
                     });
                     
-                    const userData = response.data;
+                    const userData = userResponse.data;
                     
-                    // nickname이 없으면 localStorage의 username 사용
-                    const displayName = userData.nickname || localStorage.getItem("username") || "사용자";
+                    // 2. user_prompt 테이블에서 nickname 가져오기
+                    let promptNickname = null;
+                    let promptData = null;
+                    try {
+                        const promptResponse = await axios.get(`/api/users/${userId}/prompt`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        promptData = promptResponse.data;
+                        promptNickname = promptData?.nickname;
+                        console.log("user_prompt에서 가져온 데이터:", promptData);
+                        console.log("user_prompt에서 가져온 nickname:", promptNickname);
+                    } catch (promptError) {
+                        console.log("user_prompt 가져오기 실패 (새 사용자일 수 있음):", promptError);
+                    }
+                    
+                    // 우선순위: user_prompt nickname > user nickname > localStorage username > 기본값
+                    const displayName = promptNickname || userData.nickname || localStorage.getItem("username") || "사용자";
+                    
+                    console.log("=== MyPage 사용자 이름 설정 ===");
+                    console.log("백엔드 user 테이블 nickname:", userData.nickname);
+                    console.log("백엔드 user_prompt 테이블 nickname:", promptNickname);
+                    console.log("localStorage username:", localStorage.getItem("username"));
+                    console.log("최종 사용할 displayName:", displayName);
+                    
                     setNickname(displayName);
+                    
+                    // user_prompt 데이터로 입력 필드 초기화
+                    if (promptData) {
+                        setAge(promptData.age || '');
+                        
+                        // 성별 변환 (M/F -> M/F, 남자/여자 -> M/F)
+                        let genderValue = promptData.gender || '';
+                        if (genderValue === "남자") genderValue = "M";
+                        if (genderValue === "여자") genderValue = "F";
+                        setGender(genderValue);
+                        
+                        // 임신 여부 변환 (boolean -> 예/아니오)
+                        let pregnantValue = promptData.isPregnant;
+                        if (pregnantValue === true) pregnantValue = "예";
+                        else if (pregnantValue === false) pregnantValue = "아니오";
+                        else pregnantValue = "";
+                        setIsPregnant(pregnantValue);
+                        
+                        // 기저질환 (healthStatus)
+                        if (promptData.healthStatus) {
+                            const healthArray = promptData.healthStatus.split(", ").filter(item => item.trim());
+                            healthArray.forEach(item => addHealth(item));
+                        }
+                        
+                        if (promptData.allergy) {
+                            const allergyArray = promptData.allergy.split(", ").filter(item => item.trim());
+                            allergyArray.forEach(item => addAllergy(item));
+                        }
+                        
+                        if (promptData.preference) {
+                            const preferArray = promptData.preference.split(", ").filter(item => item.trim());
+                            preferArray.forEach(item => addPrefer(item));
+                        }
+                    }
                     
                     // 프로필 이미지 처리
                     const validProfileImage = getValidProfileImage(userData.profileImage);
@@ -94,17 +209,14 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
         };
 
         fetchUserProfile();
+    }, []); // 빈 의존성 배열로 컴포넌트 마운트 시에만 실행
 
-        // 기존 로직: 전역 상태 user가 바뀔 때마다 localUser 업데이트
-        if (user) {
-            setAge(user.age || '');
-            setGender(user.gender || '');
-            setIsPregnant(user.isPregnant || '');
-            setHealth('');
-            setAllergy('');
-            setPrefer('');
-        }
-    }, [user, dispatch]);
+    // 전역 상태 user가 바뀔 때마다 localUser 업데이트 (별도 useEffect)
+    useEffect(() => {
+        setHealth('');
+        setAllergy('');
+        setPrefer('');
+    }, [user]);
 
     const handleAlertConfirm = () => {
         console.log("alert 클릭");
@@ -138,22 +250,40 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                         </div>
                     </div>
                 </div>
+                <div className={styles.user__nickname}>
+                    <div className={styles.labeledBox}>
+                        <span className={styles.boxLabel}>닉네임</span>
+                        <div className={styles.user__input}>
+                            <input 
+                                type="text" 
+                                placeholder="닉네임을 입력하세요."
+                                value={nickname}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setNickname(val);
+                                    setIsEdited(true);
+                                }}
+                                maxLength={10}
+                             />
+                        </div>
+                    </div>
+                </div>
                 <div className={styles.user__gender}>
                     <div className={styles.labeledBox}>
                         <span className={styles.boxLabel}>성별</span>
                         <button
-                            className={`${styles.button} ${gender === "남자" ? styles.active : ""}`}
+                            className={`${styles.button} ${gender === "M" ? styles.active : ""}`}
                             onClick={() => {
-                                setGender("남자");
-                                dispatch({ type: 'UPDATE_FIELD', field: 'gender', value: "남자" });
+                                setGender("M");
+                                dispatch({ type: 'UPDATE_FIELD', field: 'gender', value: "M" });
                                 setIsEdited(true);
                             }}
                          >남자</button>
                         <button
-                            className={`${styles.button} ${gender === "여자" ? styles.active : ""}`}
+                            className={`${styles.button} ${gender === "F" ? styles.active : ""}`}
                             onClick={() => {
-                                setGender("여자");
-                                dispatch({ type: 'UPDATE_FIELD', field: 'gender', value: "여자" });
+                                setGender("F");
+                                dispatch({ type: 'UPDATE_FIELD', field: 'gender', value: "F" });
                                 setIsEdited(true);
                             }}
                         >여자</button> 
@@ -183,6 +313,16 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                 onChange={(e) => {
                                     setHealth(e.target.value);
                                     setIsEdited(true);
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && health.trim()) {
+                                        if (!addHealth(health)) {
+                                            alert("이미 입력된 항목입니다.");
+                                        } else {
+                                            setHealth('');
+                                            setIsEdited(true);
+                                        }
+                                    }
                                 }}
                             />
                         </div>
@@ -220,6 +360,16 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                     setAllergy(e.target.value);
                                     setIsEdited(true);
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && allergy.trim()) {
+                                        if (!addAllergy(allergy)) {
+                                            alert("이미 입력된 항목입니다.");
+                                        } else {
+                                            setAllergy('');
+                                            setIsEdited(true);
+                                        }
+                                    }
+                                }}
                             />
                         </div>
                         <button className={styles.checkButton} onClick={() => {
@@ -255,6 +405,16 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
                                 onChange={(e) => {
                                     setPrefer(e.target.value);
                                     setIsEdited(true);
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && prefer.trim()) {
+                                        if (!addPrefer(prefer)) {
+                                            alert("이미 입력된 항목입니다.");
+                                        } else {
+                                            setPrefer('');
+                                            setIsEdited(true);
+                                        }
+                                    }
                                 }}
                             />
                         </div>
