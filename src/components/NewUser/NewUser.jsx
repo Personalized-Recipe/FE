@@ -2,9 +2,20 @@ import React, { useState, useEffect } from 'react';
 import './NewUser.scss';
 import Navbar from "../Navbar/Navbar";
 import axios from 'axios';
+import { FaUser, FaBirthdayCake, FaVenusMars, FaBaby, FaHeartbeat, FaAllergies, FaUtensils } from 'react-icons/fa';
 
 const allergyOptions = [
     "복숭아", "키위", "견과류", "우유", "계란", "새우", "게", "오징어", "조개류", "대두", "밀", "메밀", "아황산염", "없음"
+];
+
+const stepList = [
+  { icon: <FaUser />, label: '닉네임' },
+  { icon: <FaBirthdayCake />, label: '나이' },
+  { icon: <FaVenusMars />, label: '성별' },
+  { icon: <FaBaby />, label: '임신' },
+  { icon: <FaHeartbeat />, label: '건강' },
+  { icon: <FaAllergies />, label: '알러지' },
+  { icon: <FaUtensils />, label: '선호' },
 ];
 
 const NewUser = () => {
@@ -133,179 +144,194 @@ const NewUser = () => {
         <div className="navbar-main">
             <Navbar />
             <div className="modal-background">
-                {step === 0 && (
-                    <div className="nickname">
-                        <div className="nick-title">닉네임을 입력해주세요.</div>
-                        <div className="nick-main">
-                            <input
-                                type="text"
-                                id="nickname"
-                                name="nickname"
-                                maxLength={10}
-                                value={nickname}
-                                onChange={(e) => setNickname(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && nickname.trim()) {
-                                        setStep(1);
-                                    }
-                                }}
-                                placeholder="닉네임(최대 10자)"
-                                className="nick-input"
-                            />
-                        </div>
-                        <button className="nick-after" onClick={() => setStep(1)}>다음</button>
+                <div className="onboarding-card">
+                    <div className="onboarding-progress">
+                        {stepList.map((s, idx) => (
+                            <React.Fragment key={s.label}>
+                                <div className={`progress-step${step === idx ? ' active' : ''}${step > idx ? ' done' : ''}`}>
+                                    <div className="progress-icon">{s.icon}</div>
+                                    <div className="progress-label">{s.label}</div>
+                                </div>
+                                {idx < stepList.length - 1 && <div className="progress-divider" />}
+                            </React.Fragment>
+                        ))}
                     </div>
-                )}
+                    <div className="onboarding-step-content">
+                        {step === 0 && (
+                            <div className="nickname">
+                                <div className="nick-title">닉네임을 입력해주세요.</div>
+                                <div className="nick-main">
+                                    <input
+                                        type="text"
+                                        id="nickname"
+                                        name="nickname"
+                                        maxLength={10}
+                                        value={nickname}
+                                        onChange={(e) => setNickname(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && nickname.trim()) {
+                                                setStep(1);
+                                            }
+                                        }}
+                                        placeholder="닉네임(최대 10자)"
+                                        className="nick-input"
+                                    />
+                                </div>
+                                <button className="nick-after" onClick={() => setStep(1)}>다음</button>
+                            </div>
+                        )}
 
-                {step === 1 && (
-                    <div className="age">
-                        <div className="age-title">나이를 입력해주세요.</div>
-                        <div className="age-main">
-                            <input
-                                type="number"
-                                min="1"
-                                max="120"
-                                step="1"
-                                className="age-input"
-                                placeholder="숫자로 입력하세요"
-                                value={age}
-                                onChange={(e) => setAge(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && age.trim()) {
-                                        setStep(2);
-                                    }
-                                }}
-                            />
-                        </div>
-                        <button className="gender-before" onClick={() => setStep(0)}>이전</button>
-                        <button className="age-after" onClick={() => setStep(2)}>다음</button>
-                    </div>
-                )}
+                        {step === 1 && (
+                            <div className="age">
+                                <div className="age-title">나이를 입력해주세요.</div>
+                                <div className="age-main">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="120"
+                                        step="1"
+                                        className="age-input"
+                                        placeholder="숫자로 입력하세요"
+                                        value={age}
+                                        onChange={(e) => setAge(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && age.trim()) {
+                                                setStep(2);
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <button className="gender-before" onClick={() => setStep(0)}>이전</button>
+                                <button className="age-after" onClick={() => setStep(2)}>다음</button>
+                            </div>
+                        )}
 
-                {step === 2 && (
-                    <div className="gender" onKeyDown={(e) => {
-                        if (e.key === 'Enter' && selectedGender) {
-                            setStep(3);
-                        }
-                    }}>
-                        <div className="gender-title">성별을 입력해주세요.</div>
-                        <div className="gender-main">
-                            <button
-                                className={`gender-button ${selectedGender === "male" ? "selected" : ""}`}
-                                onClick={() => setSelectedGender("male")}
-                            >
-                                남
-                            </button>
-                            <button
-                                className={`gender-button ${selectedGender === "female" ? "selected" : ""}`}
-                                onClick={() => setSelectedGender("female")}
-                            >
-                                여
-                            </button>
-                        </div>
-                        <button className="gender-before" onClick={() => setStep(1)}>이전</button>
-                        <button className="gender-after" onClick={() => setStep(3)}>다음</button>
-                    </div>
-                )}
+                        {step === 2 && (
+                            <div className="gender" onKeyDown={(e) => {
+                                if (e.key === 'Enter' && selectedGender) {
+                                    setStep(3);
+                                }
+                            }}>
+                                <div className="gender-title">성별을 입력해주세요.</div>
+                                <div className="gender-main">
+                                    <button
+                                        className={`gender-button ${selectedGender === "male" ? "selected" : ""}`}
+                                        onClick={() => setSelectedGender("male")}
+                                    >
+                                        남
+                                    </button>
+                                    <button
+                                        className={`gender-button ${selectedGender === "female" ? "selected" : ""}`}
+                                        onClick={() => setSelectedGender("female")}
+                                    >
+                                        여
+                                    </button>
+                                </div>
+                                <button className="gender-before" onClick={() => setStep(1)}>이전</button>
+                                <button className="gender-after" onClick={() => setStep(3)}>다음</button>
+                            </div>
+                        )}
 
-                {step === 3 && (
-                    <div className="pregnant" onKeyDown={(e) => {
-                        if (e.key === 'Enter' && pregnantStatus) {
-                            setStep(4);
-                        }
-                    }}>
-                        <div className="pregnant-title">임신 여부를 체크해주세요.</div>
-                        <div className="pregnant-main">
-                            <button
-                                className={`pregnant-button ${pregnantStatus === "pregnant" ? "selected" : ""}`}
-                                onClick={() => setPregnantStatus("pregnant")}
-                            >
-                                임신함
-                            </button>
-                            <button
-                                className={`pregnant-button ${pregnantStatus === "none" ? "selected" : ""}`}
-                                onClick={() => setPregnantStatus("none")}
-                            >
-                                해당사항 없음
-                            </button>
-                        </div>
-                        <button className="preg-before" onClick={() => setStep(2)}>이전</button>
-                        <button className="preg-after" onClick={() => setStep(4)}>다음</button>
-                    </div>
-                )}
+                        {step === 3 && (
+                            <div className="pregnant" onKeyDown={(e) => {
+                                if (e.key === 'Enter' && pregnantStatus) {
+                                    setStep(4);
+                                }
+                            }}>
+                                <div className="pregnant-title">임신 여부를 체크해주세요.</div>
+                                <div className="pregnant-main">
+                                    <button
+                                        className={`pregnant-button ${pregnantStatus === "pregnant" ? "selected" : ""}`}
+                                        onClick={() => setPregnantStatus("pregnant")}
+                                    >
+                                        임신함
+                                    </button>
+                                    <button
+                                        className={`pregnant-button ${pregnantStatus === "none" ? "selected" : ""}`}
+                                        onClick={() => setPregnantStatus("none")}
+                                    >
+                                        해당사항 없음
+                                    </button>
+                                </div>
+                                <button className="preg-before" onClick={() => setStep(2)}>이전</button>
+                                <button className="preg-after" onClick={() => setStep(4)}>다음</button>
+                            </div>
+                        )}
 
-                {step === 4 && (
-                    <div className="health-status">
-                        <div className="health-status-title">건강상태를 입력해주세요.</div>
-                        <div className="health-main">
-                            <input
-                                id="health-input"
-                                type="text"
-                                value={healthInfo}
-                                maxLength={50}
-                                placeholder="예: 천식이 있어요"
-                                onChange={(e) => setHealthInfo(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        setStep(5);
-                                    }
-                                }}
-                                className="health-input"
-                            />
-                            <div className="char-count">{healthInfo.length} / 50</div>
-                        </div>
-                        <button className="health-before" onClick={() => setStep(3)}>이전</button>
-                        <button className="health-after" onClick={() => setStep(5)}>다음</button>
-                    </div>
-                )}
+                        {step === 4 && (
+                            <div className="health-status">
+                                <div className="health-status-title">건강상태를 입력해주세요.</div>
+                                <div className="health-main">
+                                    <input
+                                        id="health-input"
+                                        type="text"
+                                        value={healthInfo}
+                                        maxLength={50}
+                                        placeholder="예: 천식이 있어요"
+                                        onChange={(e) => setHealthInfo(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                setStep(5);
+                                            }
+                                        }}
+                                        className="health-input"
+                                    />
+                                    <div className="char-count">{healthInfo.length} / 50</div>
+                                </div>
+                                <button className="health-before" onClick={() => setStep(3)}>이전</button>
+                                <button className="health-after" onClick={() => setStep(5)}>다음</button>
+                            </div>
+                        )}
 
-                {step === 5 && (
-                    <div className="allergy" onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            setStep(6);
-                        }
-                    }}>
-                        <div className="allergy-title">알러지를 선택해주세요.</div>
-                        <div className="allergy-main">
-                            {allergyOptions.map((item) => (
-                                <button
-                                    key={item}
-                                    className={`allergy-button ${selectedAllergies.includes(item) ? "selected" : ""}`}
-                                    onClick={() => toggleAllergy(item)}
-                                >
-                                    {item}
-                                </button>
-                            ))}
-                        </div>
-                        <button className="allergy-before" onClick={() => setStep(4)}>이전</button>
-                        <button className="allergy-after" onClick={() => setStep(6)}>다음</button>
-                    </div>
-                )}
+                        {step === 5 && (
+                            <div className="allergy" onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    setStep(6);
+                                }
+                            }}>
+                                <div className="allergy-title">알러지를 선택해주세요.</div>
+                                <div className="allergy-main">
+                                    {allergyOptions.map((item) => (
+                                        <button
+                                            key={item}
+                                            className={`allergy-button ${selectedAllergies.includes(item) ? "selected" : ""}`}
+                                            onClick={() => toggleAllergy(item)}
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                </div>
+                                <button className="allergy-before" onClick={() => setStep(4)}>이전</button>
+                                <button className="allergy-after" onClick={() => setStep(6)}>다음</button>
+                            </div>
+                        )}
 
-                {step === 6 && (
-                    <div className="preferred">
-                        <div className="preferred-title">선호하는 음식을 입력해주세요.</div>
-                        <div className="prefer-main">
-                            <input
-                                id="prefer-input"
-                                type="text"
-                                value={preferFood}
-                                maxLength={100}
-                                placeholder="예: 파스타, 연어, 단백한 음식"
-                                onChange={(e) => setPreferFood(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleSubmitPrompt();
-                                    }
-                                }}
-                                className="prefer-input"
-                            />
-                            <div className="prefer-count">{preferFood.length} / 100</div>
-                        </div>
-                        <button className="prefer-before" onClick={() => setStep(5)}>이전</button>
-                        <button className="prefer-after" onClick={handleSubmitPrompt}>완료</button>
+                        {step === 6 && (
+                            <div className="preferred">
+                                <div className="preferred-title">선호하는 음식을 입력해주세요.</div>
+                                <div className="prefer-main">
+                                    <input
+                                        id="prefer-input"
+                                        type="text"
+                                        value={preferFood}
+                                        maxLength={100}
+                                        placeholder="예: 파스타, 연어, 단백한 음식"
+                                        onChange={(e) => setPreferFood(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSubmitPrompt();
+                                            }
+                                        }}
+                                        className="prefer-input"
+                                    />
+                                    <div className="prefer-count">{preferFood.length} / 100</div>
+                                </div>
+                                <button className="prefer-before" onClick={() => setStep(5)}>이전</button>
+                                <button className="prefer-after" onClick={handleSubmitPrompt}>완료</button>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
