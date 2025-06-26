@@ -50,6 +50,7 @@ function ChatList({ chatRooms, onSelectChat, onUpdateTitle, currentRoomId }) {
                         <span className={styles.chatWindow__title} 
                               onClick={(e) => {
                                 e.stopPropagation(); // 클릭 이벤트 전파 방지
+                                handleRoomClick(room);
                                 if (room.id === currentRoomId) handleEdit(room.id); // 선택된 방만 편집 모드
                               } }>
                             {room.title || "새 채팅방"}
