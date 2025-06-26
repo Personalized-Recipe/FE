@@ -50,7 +50,21 @@ function Main() {
 
     // 채팅 메시지 전송
     const handleSend = () => {
-        sendMessage(currentRoomId, showIngredient);
+        let roomId = currentRoomId;
+        let inputValue = input.trim();
+        // 채팅방이 없거나 선택된 방이 없으면 새로 생성 (입력값을 제목으로)
+        if ((!chatRooms.length || !roomId) && inputValue) {
+            const newRoom = createChatRoom(inputValue);
+            roomId = newRoom.id;
+            setCurrentRoomId(roomId);
+        } else if (roomId && inputValue) {
+            // 이미 채팅방이 있고, 해당 방의 메시지가 0개면 제목을 입력값으로 변경
+            const room = chatRooms.find(r => r.id === roomId);
+            if (room && (!room.messages || room.messages.length === 0)) {
+                updateChatTitle(roomId, inputValue);
+            }
+        }
+        sendMessage(roomId, showIngredient);
         console.log("채팅 전송, 냉장고 사용:", showIngredient);
     }
 
@@ -65,6 +79,8 @@ function Main() {
                     chatRooms={chatRooms}
                     onCreateChatRoom={handleCreateChatRoom}
                     onUpdateTitle={updateChatTitle}
+                    currentRoomId={currentRoomId}
+                    // 이 정도를 받아야함
                 />
                 <div className={styles.main__chat}>
                     <ChatWindow 

@@ -1,6 +1,7 @@
 import React from "react";  
 import ReactDOM from "react-dom";
 import styles from "./ModalWrapper.module.scss";
+import { AiOutlineClose } from "react-icons/ai";
 
 function ModalWrapper({ children, handleClose }) {
 
@@ -10,7 +11,9 @@ function ModalWrapper({ children, handleClose }) {
                  <button className={styles.modalClose} onClick={() => {
                     handleClose();
                     console.log("모달 닫기 버튼 클릭")
-                 }}>닫기</button>
+                 }} aria-label="닫기">
+                   <AiOutlineClose size={22} />
+                 </button>
                 {children}
             </div>
         </div>,

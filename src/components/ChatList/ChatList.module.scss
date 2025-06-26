@@ -35,3 +35,18 @@
   }
 
 }
+
+.chatWindow__title {
+  display: inline-block;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.selectedRoom {
+  background-color: #e1f0ff;
+  font-weight: 600;
+  color: #0070ff;
+}

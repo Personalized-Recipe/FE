@@ -94,7 +94,7 @@ function MyIngre() {
 
   return (
     <div className={styles.container}>
-      <h2>🥕 장바구니 🥕</h2>
+      <h2 className={styles.title}>🥕 장바구니 🥕</h2>
       <div className={styles.inputContainer}>
         <input
           className= {styles.input}
@@ -116,10 +116,12 @@ function MyIngre() {
           {ingredients.map((item, idx) => (
             <div className={styles.Item} key={idx} onClick={() => handleEdit(idx)}>
               {item.name} {item.amount}{item.unit}
-              <button className={styles.deleteBtn} onClick={(e) => {
-                e.stopPropagation(); // 클릭 방지
-                handleDelete(idx);
-              }}>삭제</button>
+              {editingIndex === idx && (
+                <button className={styles.deleteBtn} onClick={(e) => {
+                  e.stopPropagation(); // 클릭 방지
+                  handleDelete(idx);
+                }}>삭제</button>
+              )}
             </div>
           ))}
         </div>

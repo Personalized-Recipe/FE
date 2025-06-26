@@ -1,7 +1,7 @@
 import React,{ useState } from "react";
 import styles from './ChatList.module.scss';
 
-function ChatList({ chatRooms, onSelectChat, onUpdateTitle}) {
+function ChatList({ chatRooms, onSelectChat, onUpdateTitle, currentRoomId }) {
     const [editingRooms, setEditingRooms] = useState({});
 
     const handleEdit = (roomId) => {
@@ -25,10 +25,14 @@ function ChatList({ chatRooms, onSelectChat, onUpdateTitle}) {
             {chatRooms?.map(room => (
                 <div
                     key={room.id}
-                    className={styles.room}
+                    className={
+                        room.id === currentRoomId
+                            ? `${styles.room} ${styles.selectedRoom}`
+                            : styles.room
+                    }
                     onClick={() => handleRoomClick(room)}
                 >
-                    {editingRooms[room.id] ? (
+                    {editingRooms[room.id] && room.id === currentRoomId ? (
                         <input 
                             type="text" 
                             value={room.title}  
@@ -46,7 +50,7 @@ function ChatList({ chatRooms, onSelectChat, onUpdateTitle}) {
                         <span className={styles.chatWindow__title} 
                               onClick={(e) => {
                                 e.stopPropagation(); // 클릭 이벤트 전파 방지
-                                handleEdit(room.id); // 제목 편집 모드로 전환
+                                if (room.id === currentRoomId) handleEdit(room.id); // 선택된 방만 편집 모드
                               } }>
                             {room.title || "새 채팅방"}
                         </span>
