@@ -126,6 +126,12 @@
     font-size: 14px;
     padding: 0 10px;
     white-space: nowrap;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+
+.Item:hover {
+    background: #f0f4ff;
+    box-shadow: 0 4px 16px 0 rgba(0,112,255,0.08);
 }
 
 .Item:active {
@@ -139,7 +145,6 @@
     left: 670px;
     width: 40px;
     height: 30px;
-    border-radius: 10px;
     white-space: nowrap;
     transition: 0.2s ease;
     text-decoration: underline;

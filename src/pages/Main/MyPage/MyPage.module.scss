@@ -17,9 +17,9 @@
 }
 
 .profile {
-    width: 50px;
+    width: 60px;
     height: 60px;
-    margin-left: 30px;
+    border-radius: 10px;
 }
 
 .MyPage__content {
@@ -146,7 +146,6 @@
     border-radius: 10px;
     height: 34px;
 }
-
 .labeledBox {
     position: relative;
     display: flex;

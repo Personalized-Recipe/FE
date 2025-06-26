@@ -1,13 +1,12 @@
 .recipeContainer {
     background: none;
     width: 100%;
-    max-width: 500px;
+    max-width: 520px;
     display: flex;
     justify-self: flex-start;
     flex-direction: column;
-    gap: 15px;
-    margin: 0 0 0 100px;
-
+    gap: 18px;
+    margin: 0 0 0 60px;
 }
 
 .recipeBlockContainer {
@@ -27,17 +26,22 @@
     align-items: center;
     overflow-x: auto;
     white-space: nowrap;
-    width: 80px;
-    color: black;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 90px;
+    min-width: 70px;
+    height: 44px;
+    color: #222;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s, color 0.2s, transform 0.2s;
 }
 
 .recipeBlock:hover {
     background-color: #e1f0ff;
-    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-    transform: scale(1.3);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    color: #0070ff;
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px 0 rgba(0,112,255,0.08);
 }
 .recipe__content {
     display: flex;
@@ -46,26 +50,39 @@
     border-radius: 20px;
     width: 100%;
     flex-direction: column;
-
-    button {
-        border: 1px solid #a2a2a2;
-        border-radius: 10px;
-    }
+    padding: 28px 18px 18px 18px;
+    border: none;
 }
 
 .buttonRow {
     display: flex;
-    gap: 12px;
+    gap: 18px;
     justify-content: flex-end; 
-    margin: 10px;
+    margin: 18px 0 0 0;
 }
 
-.saveBtn {
-    background-color: #e1f0ff;
+.buttonRow button {
+    border-radius: 10px;
+    border: none;
+    background: #f0f4ff;
+    color: #0070ff;
+    font-weight: 600;
+    padding: 8px 18px;
+    font-size: 15px;
+    box-shadow: 0 2px 8px 0 rgba(0,112,255,0.04);
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.buttonRow button:hover {
+    background: #0070ff;
+    color: #fff;
 }
 
 .recipeDetail {
-    height: 35vh;
-    overflow-y: scroll;
-    padding: 16px;
+    min-height: 80px;
+    max-height: 35vh;
+    overflow-y: auto;
+    padding: 0 15px;
+    font-size: 16px;
 }
