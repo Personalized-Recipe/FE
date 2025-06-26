@@ -36,12 +36,13 @@
 }
 
 .allergy-main {
-  width: 370px;
-  height: 320px;
-  margin: 10px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #e1e1e1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  margin:12px auto;
+  border: none;
 }
 
 .nick-main,
@@ -50,12 +51,13 @@
 .pregnant-main,
 .health-main,
 .prefer-main{
-  width: 370px;
-  height: 320px;
-  margin: 10px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #dadada;
+  width: 100%;
+  max-width: 320px;
+  height: 40%;
+  max-height: 70%;
+  border: none;
+  padding: 20px 0;
+  margin: 0 auto 12px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -145,7 +147,7 @@
 .allergy-button {
   height: 40px;
   width: 89px;
-  margin: 6.6px;
+  margin: 4px;
   background-color: #ffffff;
   border: 1px solid #ececec;
   border-radius: 12px;
@@ -287,17 +289,17 @@
   align-items: center;
   min-width: 48px;
   opacity: 0.5;
-  color: #b0b0b0;
+  color: #4c4c4cbd;
   transition: opacity 0.2s, color 0.2s;
   z-index: 1;
 }
 .progress-step.active {
   opacity: 1;
-  color: #0070ff;
+  color: #3474ffb4;
 }
 .progress-step.done {
   opacity: 1;
-  color: #22c55e;
+  color: #26d21db7;
 }
 .progress-icon {
   font-size: 1.5rem;
@@ -317,8 +319,8 @@
   z-index: 0;
 }
 .progress-step.done ~ .progress-divider {
-  background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+  background: linear-gradient(90deg, #51f98eb3 0%, #4ade80 100%);
 }
 .progress-step.active ~ .progress-divider {
-  background: linear-gradient(90deg, #0070ff 0%, #60a5fa 100%);
+  background: linear-gradient(90deg, #006effb6 0%, #60a5fa 100%);
 }
