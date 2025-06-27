@@ -84,7 +84,7 @@ export const useChat = () => {
 };
 
   // 메세지 전송
-  const sendMessage = async (roomId, useRefrigerator = false) => {
+  const sendMessage = async (roomId, useRefrigerator = false, isSpecificRecipe = false) => {
     const trimmed = input.trim();
     if (!trimmed || !currentRoomId) return;
 
@@ -156,6 +156,7 @@ export const useChat = () => {
       console.log("메시지 내용:", trimmed);
       console.log("채팅방 ID:", roomId);
       console.log("냉장고 사용 여부:", useRefrigerator);
+      console.log("특정 레시피 요청 여부:", isSpecificRecipe);
       console.log("요청 헤더:", {
         'Content-Type': 'application/json'
       });
@@ -164,7 +165,8 @@ export const useChat = () => {
         userId: parseInt(userId) || 0,
         request: trimmed,
         chatRoomId: roomId,
-        useRefrigerator: useRefrigerator
+        useRefrigerator: useRefrigerator,
+        isSpecificRecipe: isSpecificRecipe
       };
       
       // 요청 데이터 검증
@@ -215,6 +217,45 @@ export const useChat = () => {
 
       // 백엔드 응답이 있으면 봇 메시지로 추가
       if (response.data) {
+        // 레시피 리스트 응답 처리 (새로운 백엔드 형식)
+        if (response.data.recipes && Array.isArray(response.data.recipes)) {
+          const botMessage = { role: 'bot', type: 'recipe-list', recipes: response.data.recipes };
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, botMessage] }
+                : room
+            )
+          );
+          return; // 아래 기존 메시지 추가 로직은 실행하지 않음
+        }
+        
+        // 단일 레시피 응답 처리 (새로운 백엔드 형식)
+        if (response.data.recipeId && response.data.title) {
+          const botMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: {
+              recipeId: response.data.recipeId,
+              title: response.data.title,
+              description: response.data.description,
+              category: response.data.category,
+              imageUrl: response.data.imageUrl,
+              cookingTime: response.data.cookingTime,
+              difficulty: response.data.difficulty
+            }
+          };
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, botMessage] }
+                : room
+            )
+          );
+          return; // 아래 기존 메시지 추가 로직은 실행하지 않음
+        }
+        
+        // 기존 단일 메시지 응답 처리
         let botContent = '';
         
         // 레시피 응답 형식에 맞게 description 필드 사용
@@ -295,6 +336,30 @@ export const useChat = () => {
     }, LOADING_START_DELAY);
   };
 
+  // 레시피 클릭 시 상세 레시피 메시지 추가 함수
+  const sendRecipeDetail = (roomId, recipe) => {
+    const botMessage = { 
+      role: 'bot', 
+      type: 'recipe-detail', 
+      recipe: {
+        recipeId: recipe.recipeId,
+        title: recipe.title,
+        description: recipe.description,
+        category: recipe.category,
+        imageUrl: recipe.imageUrl,
+        cookingTime: recipe.cookingTime,
+        difficulty: recipe.difficulty
+      }
+    };
+    setChatRooms(prevRooms =>
+      prevRooms.map(room =>
+        room.id === roomId
+          ? { ...room, messages: [...room.messages, botMessage] }
+          : room
+      )
+    );
+  };
+
   return {
     messages,
     currentRoomId, setCurrentRoomId,
@@ -303,7 +368,8 @@ export const useChat = () => {
     chatRooms, setChatRooms,
     createChatRoom,
     sendMessage,
-    updateChatTitle
+    updateChatTitle,
+    sendRecipeDetail
   };
 };
 

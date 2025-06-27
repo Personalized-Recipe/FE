@@ -20,6 +20,7 @@ function Main() {
 
     const { ingredients, handleIngredient } = useIngre();
     const [showIngredient, setShowIngredient] = useState(false);
+    const [isSpecificRecipe, setIsSpecificRecipe] = useState(false);
 
      // 현재 선택된 방의 messages 
     const currentRoom = chatRooms.find(room => room.id === currentRoomId);
@@ -29,6 +30,10 @@ function Main() {
     const handleToggleIngredient = () => {
         handleIngredient();
         setShowIngredient(prev => !prev);
+    };
+
+    const handleToggleSpecificRecipe = () => {
+        setIsSpecificRecipe(prev => !prev);
     };
 
     const handleSelectChat = (room) => {
@@ -64,8 +69,9 @@ function Main() {
                 updateChatTitle(roomId, inputValue);
             }
         }
-        sendMessage(roomId, showIngredient);
+        sendMessage(roomId, showIngredient, isSpecificRecipe);
         console.log("채팅 전송, 냉장고 사용:", showIngredient);
+        console.log("채팅 전송, 특정 레시피 요청:", isSpecificRecipe);
     }
 
     return (
@@ -87,11 +93,14 @@ function Main() {
                     messages={messages} 
                     chatTitle={chatTitle} 
                     isLoadingRecipe={isLoadingRecipe} 
+                    currentRoomId={currentRoomId}
                     />  
                     <ChatInput 
                         input={input}
                         setInput={setInput}
                         onToggleIngredient={handleToggleIngredient}
+                        isSpecificRecipe={isSpecificRecipe}
+                        onToggleSpecificRecipe={handleToggleSpecificRecipe}
                         onSend={handleSend}
                     />
                 </div>
