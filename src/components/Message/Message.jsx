@@ -4,6 +4,9 @@ import styles from "./Message.module.scss";
 function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }) {
     const [imageError, setImageError] = useState(false);
     
+    // 디버깅 로그 추가
+    console.log("Message 컴포넌트 렌더링:", { role, type, recipes, recipe });
+    
     // 줄바꿈을 <br> 태그로 변환
     const formatContent = (text) => {
         return text.split('\n').map((line, index) => (
@@ -18,6 +21,10 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
     if (type === 'recipe-list' && Array.isArray(recipes)) {
         return (
             <div className={styles.message}>
+                <div className={styles.recommendationHeader}>
+                    <h4>🍽️ 추천 메뉴</h4>
+                    <p>원하는 메뉴를 클릭하면 상세 레시피를 확인할 수 있습니다</p>
+                </div>
                 <div className={styles.recipeListBox}>
                     {recipes.map((r, i) => (
                         <button
@@ -32,6 +39,11 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
                                     </div>
                                 )}
                                 <span className={styles.recipeBtnTitle}>{r.title}</span>
+                                <div className={styles.recipeBtnMeta}>
+                                    <span className={styles.recipeBtnCategory}>{r.category}</span>
+                                    <span className={styles.recipeBtnTime}>⏱️ {r.cookingTime}</span>
+                                    <span className={styles.recipeBtnDifficulty}>🔥 {r.difficulty}</span>
+                                </div>
                             </div>
                         </button>
                     ))}
@@ -42,9 +54,11 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
 
     // 레시피 상세 메시지 (이미지, 카테고리, 조리시간, 난이도 포함)
     if (type === 'recipe-detail' && recipe) {
+        console.log("레시피 상세 메시지 렌더링:", recipe.title);
         return (
-            <div className={styles.message}>
+            <div className={styles.recipeDetailMessage}>
                 <div className={styles.recipeDetailBox}>
+                    <div style={{color: 'red', fontWeight: 'bold'}}>DEBUG: 레시피 상세 메시지가 렌더링됨</div>
                     <div className={styles.recipeHeader}>
                         <h3 className={styles.recipeTitle}>{recipe.title}</h3>
                         <div className={styles.recipeMeta}>

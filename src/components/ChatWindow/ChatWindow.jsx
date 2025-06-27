@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styles from "./ChatWindow.module.scss";
 import Message from '../Message/Message';
-import Recipe from '../Recipe/Recipe'
 import { useChat } from '../../utils/useChat';
 
 function ChatWindow({messages, chatTitle, isLoadingRecipe, currentRoomId}) {
@@ -33,7 +32,12 @@ function ChatWindow({messages, chatTitle, isLoadingRecipe, currentRoomId}) {
                             onRecipeClick={handleRecipeClick}
                         />
                     ))}
-                    {isLoadingRecipe && <Recipe />}
+                    {isLoadingRecipe && (
+                        <div className={styles.loadingMessage}>
+                            <div className={styles.loadingSpinner}></div>
+                            <p>레시피를 찾고 있습니다...</p>
+                        </div>
+                    )}
                     <div ref={messagesEndRef} />
                 </div>
             </div>

@@ -83,25 +83,65 @@ export const useChat = () => {
     ));
 };
 
+  // 메뉴 추천 텍스트를 파싱해서 레시피 리스트로 변환하는 함수
+  const parseMenuRecommendation = (text) => {
+    const recipes = [];
+    
+    // **숫자. 메뉴명** 패턴을 찾아서 파싱
+    const menuPattern = /\*\*(\d+)\.\s*([^*]+)\*\*/g;
+    let match;
+    
+    while ((match = menuPattern.exec(text)) !== null) {
+      const menuNumber = parseInt(match[1]);
+      const menuTitle = match[2].trim();
+      
+      // 해당 메뉴의 상세 정보 추출
+      const menuStartIndex = match.index;
+      const nextMenuMatch = /\*\*\d+\.\s*[^*]+\*\*/g;
+      nextMenuMatch.lastIndex = menuStartIndex + match[0].length;
+      const nextMatch = nextMenuMatch.exec(text);
+      
+      const menuEndIndex = nextMatch ? nextMatch.index : text.length;
+      const menuDetailText = text.substring(menuStartIndex + match[0].length, menuEndIndex).trim();
+      
+      // 카테고리, 조리시간, 난이도 추출
+      const categoryMatch = menuDetailText.match(/- 카테고리:\s*([^\n]+)/);
+      const timeMatch = menuDetailText.match(/예상 조리 시간:\s*([^\n]+)/);
+      const difficultyMatch = menuDetailText.match(/난이도:\s*([^\n]+)/);
+      
+      const recipe = {
+        recipeId: menuNumber,
+        title: menuTitle,
+        description: menuDetailText,
+        category: categoryMatch ? categoryMatch[1].trim() : "기타",
+        imageUrl: null, // 이미지 URL은 백엔드에서 제공하지 않음
+        cookingTime: timeMatch ? timeMatch[1].trim() : "정보 없음",
+        difficulty: difficultyMatch ? difficultyMatch[1].trim() : "정보 없음"
+      };
+      
+      recipes.push(recipe);
+    }
+    
+    console.log("파싱된 레시피 개수:", recipes.length);
+    recipes.forEach((recipe, index) => {
+      console.log(`레시피 ${index + 1}:`, recipe);
+    });
+    
+    return recipes;
+  };
+
   // 메세지 전송
   const sendMessage = async (roomId, useRefrigerator = false, isSpecificRecipe = false) => {
-    const trimmed = input.trim();
-    if (!trimmed || !currentRoomId) return;
+    console.log("=== 채팅 메시지 전송 시작 ===");
+    console.log("사용자 입력:", input);
+    console.log("냉장고 사용 여부:", useRefrigerator);
+    console.log("특정 레시피 요청 여부:", isSpecificRecipe);
+    
+    if (!input.trim()) {
+      console.log("입력이 비어있어 전송하지 않습니다.");
+      return;
+    }
 
-    const newMessage = { role: 'user', content: trimmed};
-
-    // 현재 채팅방에 메시지 추가
-    setChatRooms(prevRooms =>
-      prevRooms.map(room =>
-        room.id === roomId
-          ? { ...room, messages: [...room.messages, newMessage] }
-          : room
-      )
-    );
-
-    setInput(''); // 입력 필드 초기화
-
-    // 백엔드로 POST 요청 보내기
     try {
       // 로그인 상태 확인
       if (!requireAuth()) {
@@ -115,111 +155,113 @@ export const useChat = () => {
       
       const { token, userId } = authInfo;
       
-      console.log("=== JWT 토큰 확인 ===");
-      console.log("토큰 존재:", !!token);
-      console.log("토큰 길이:", token ? token.length : 0);
-      console.log("토큰 시작 부분:", token ? token.substring(0, 20) + "..." : "없음");
-      console.log("사용자 ID:", userId);
-      
-      // JWT 토큰 만료 확인
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          const currentTime = Date.now() / 1000;
-          console.log("토큰 만료 시간:", new Date(payload.exp * 1000));
-          console.log("현재 시간:", new Date(currentTime * 1000));
-          console.log("토큰 만료까지 남은 시간:", Math.floor(payload.exp - currentTime), "초");
-          
-          if (payload.exp < currentTime) {
-            console.error("JWT 토큰이 만료되었습니다.");
-            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-            localStorage.clear();
-            window.location.href = "/";
-            return;
-          }
-        } catch (error) {
-          console.error("JWT 토큰 파싱 실패:", error);
-        }
-      }
-      
       if (!token || !userId) {
         console.error("JWT 토큰 또는 사용자 ID가 없습니다.");
-        console.error("토큰:", token);
-        console.error("사용자 ID:", userId);
-        alert("로그인이 필요합니다. 다시 로그인해주세요.");
-        window.location.href = "/";
         return;
       }
 
-      console.log("=== 채팅 메시지 전송 시작 ===");
-      console.log("사용자 ID:", userId);
-      console.log("메시지 내용:", trimmed);
-      console.log("채팅방 ID:", roomId);
-      console.log("냉장고 사용 여부:", useRefrigerator);
-      console.log("특정 레시피 요청 여부:", isSpecificRecipe);
-      console.log("요청 헤더:", {
-        'Content-Type': 'application/json'
-      });
+      // 사용자 메시지 추가
+      const userMessage = { role: 'user', content: input };
+      setChatRooms(prevRooms => 
+        prevRooms.map(room => 
+          room.id === roomId
+            ? {...room, messages: [...room.messages || [], userMessage] }
+            : room
+        )
+      );
 
+      // 입력 초기화
+      setInput('');
+      
+      // 로딩 시작
+      setIsLoadingRecipe(true);
+      
+      // 백엔드로 요청 전송
       const requestData = {
         userId: parseInt(userId) || 0,
-        request: trimmed,
+        request: input,
         chatRoomId: roomId,
         useRefrigerator: useRefrigerator,
         isSpecificRecipe: isSpecificRecipe
       };
       
-      // 요청 데이터 검증
-      if (!requestData.userId || requestData.userId === 0) {
-        console.error("유효하지 않은 userId:", userId);
-        return;
-      }
+      console.log("백엔드 요청 데이터:", JSON.stringify(requestData, null, 2));
       
-      if (!requestData.request || requestData.request.trim() === '') {
-        console.error("유효하지 않은 request:", requestData.request);
-        return;
-      }
-      
-      console.log("=== 백엔드로 보내는 요청 데이터 ===");
-      console.log("요청 URL:", `/api/recipes/request`);
-      console.log("요청 데이터:", JSON.stringify(requestData, null, 2));
-      console.log("요청 데이터 타입 확인:");
-      console.log("- userId 타입:", typeof requestData.userId, "값:", requestData.userId);
-      console.log("- request 타입:", typeof requestData.request, "값:", requestData.request);
-      console.log("- chatRoomId 타입:", typeof requestData.chatRoomId, "값:", requestData.chatRoomId);
-      console.log("- useRefrigerator 타입:", typeof requestData.useRefrigerator, "값:", requestData.useRefrigerator);
-      
-      // curl 형태로 출력 (백엔드 개발자용)
-      const curlCommand = `curl -X POST http://localhost:8080/api/recipes/request \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer ${token}" \\
-  -d '${JSON.stringify(requestData)}' \\
-  -v`;
-      console.log("=== CURL 명령어 (백엔드 개발자용) ===");
-      console.log(curlCommand);
-
       const response = await axios.post(`/api/recipes/request`, requestData, {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
       });
       
-      console.log("=== 실제 요청 헤더 확인 ===");
-      console.log("요청 URL:", `/api/recipes/request`);
-      console.log("요청 데이터:", JSON.stringify(requestData, null, 2));
-      console.log("Authorization 헤더:", `Bearer ${token.substring(0, 20)}...`);
-
-      console.log("=== 채팅 메시지 전송 성공 ===");
+      console.log("=== 백엔드 응답 ===");
       console.log("응답 상태:", response.status);
       console.log("응답 데이터:", response.data);
-      console.log("응답 데이터 타입:", typeof response.data);
-      console.log("응답 데이터 키들:", Object.keys(response.data || {}));
-
-      // 백엔드 응답이 있으면 봇 메시지로 추가
+      
+      // 로딩 종료
+      setIsLoadingRecipe(false);
+      
+      // 백엔드 응답 처리
       if (response.data) {
-        // 레시피 리스트 응답 처리 (새로운 백엔드 형식)
-        if (response.data.recipes && Array.isArray(response.data.recipes)) {
-          const botMessage = { role: 'bot', type: 'recipe-list', recipes: response.data.recipes };
+        // 새로운 백엔드 응답 형식 처리 (type 필드가 있는 경우)
+        if (response.data.type === 'recipe-list' && response.data.recipes) {
+          console.log("레시피 리스트 응답 감지:", response.data);
+          
+          // 백엔드에서 이미 구조화된 레시피 데이터를 보낸 경우
+          if (response.data.recipes.length > 0 && response.data.recipes[0].title !== "메뉴 추천") {
+            const botMessage = { 
+              role: 'bot', 
+              type: 'recipe-list',
+              recipes: response.data.recipes
+            };
+            
+            setChatRooms(prevRooms => 
+              prevRooms.map(room =>
+                room.id === roomId
+                  ? { ...room, messages: [...room.messages, botMessage] }
+                  : room
+              )
+            );
+            return;
+          }
+          
+          // 백엔드에서 description에 텍스트로 레시피 정보를 보낸 경우
+          if (response.data.recipes.length > 0 && response.data.recipes[0].description) {
+            const description = response.data.recipes[0].description;
+            console.log("텍스트에서 레시피 파싱 시작:", description);
+            
+            const parsedRecipes = parseMenuRecommendation(description);
+            if (parsedRecipes.length > 0) {
+              console.log("파싱된 레시피 리스트:", parsedRecipes);
+              
+              const botMessage = { 
+                role: 'bot', 
+                type: 'recipe-list',
+                recipes: parsedRecipes
+              };
+              
+              setChatRooms(prevRooms => 
+                prevRooms.map(room =>
+                  room.id === roomId
+                    ? { ...room, messages: [...room.messages, botMessage] }
+                    : room
+                )
+              );
+              return;
+            }
+          }
+        }
+        
+        // 특정 레시피 상세 응답 처리
+        if (response.data.type === 'recipe-detail' && response.data.recipe) {
+          console.log("레시피 상세 응답 감지:", response.data);
+          
+          const botMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: response.data.recipe
+          };
+          
           setChatRooms(prevRooms =>
             prevRooms.map(room =>
               room.id === roomId
@@ -227,11 +269,31 @@ export const useChat = () => {
                 : room
             )
           );
-          return; // 아래 기존 메시지 추가 로직은 실행하지 않음
+          return;
         }
         
-        // 단일 레시피 응답 처리 (새로운 백엔드 형식)
-        if (response.data.recipeId && response.data.title) {
+        // recipe 객체가 직접 응답으로 오는 경우
+        if (response.data.recipe && response.data.recipe.recipeId) {
+          console.log("레시피 객체 직접 응답 감지:", response.data.recipe);
+          
+          const botMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: response.data.recipe
+          };
+          
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, botMessage] }
+                : room
+            )
+          );
+          return;
+        }
+        
+        // 기존 응답 형식 처리
+        if (response.data.recipeId) {
           const botMessage = { 
             role: 'bot', 
             type: 'recipe-detail', 
@@ -245,6 +307,7 @@ export const useChat = () => {
               difficulty: response.data.difficulty
             }
           };
+          
           setChatRooms(prevRooms =>
             prevRooms.map(room =>
               room.id === roomId
@@ -252,52 +315,32 @@ export const useChat = () => {
                 : room
             )
           );
-          return; // 아래 기존 메시지 추가 로직은 실행하지 않음
-        }
-        
-        // 기존 단일 메시지 응답 처리
-        let botContent = '';
-        
-        // 레시피 응답 형식에 맞게 description 필드 사용
-        if (response.data.description) {
-          botContent = response.data.description;
-          console.log("description 필드에서 레시피 추출:", botContent);
-        } else if (response.data.response) {
-          botContent = response.data.response;
-          console.log("response 필드에서 메시지 추출:", botContent);
-        } else if (response.data.reply) {
-          botContent = response.data.reply;
-          console.log("reply 필드에서 메시지 추출:", botContent);
-        } else if (response.data.message) {
-          botContent = response.data.message;
-          console.log("message 필드에서 메시지 추출:", botContent);
-        } else if (response.data.content) {
-          botContent = response.data.content;
-          console.log("content 필드에서 메시지 추출:", botContent);
-        } else if (typeof response.data === 'string') {
-          botContent = response.data;
-          console.log("문자열 응답에서 메시지 추출:", botContent);
-        }
-        
-        if (botContent) {
-          const botMessage = { role: 'bot', content: botContent };
-          console.log("봇 메시지 객체 생성:", botMessage);
-          
-          setChatRooms(prevRooms => {
-            console.log("이전 채팅방 상태:", prevRooms);
-            const updatedRooms = prevRooms.map(room =>
-              room.id === roomId
-                ? { ...room, messages: [...room.messages, botMessage] }
-                : room
-            );
-            console.log("업데이트된 채팅방 상태:", updatedRooms);
-            return updatedRooms;
-          });
-          
-          console.log("봇 메시지 추가됨:", botContent);
         } else {
-          console.log("백엔드 응답에 메시지 내용이 없습니다.");
+          console.error("백엔드에서 레시피 상세 정보를 받지 못했습니다.");
           console.log("전체 응답 데이터:", JSON.stringify(response.data, null, 2));
+          
+          // 에러 시 기존 방식으로 표시
+          const fallbackMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: {
+              recipeId: recipe.recipeId,
+              title: recipe.title,
+              description: recipe.description,
+              category: recipe.category,
+              imageUrl: recipe.imageUrl,
+              cookingTime: recipe.cookingTime,
+              difficulty: recipe.difficulty
+            }
+          };
+          
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, fallbackMessage] }
+                : room
+            )
+          );
         }
       } else {
         console.log("백엔드 응답이 비어있습니다.");
@@ -308,6 +351,9 @@ export const useChat = () => {
       console.error("에러 상태:", error.response?.status);
       console.error("에러 데이터:", error.response?.data);
       console.error("에러 메시지:", error.message);
+      
+      // 에러 발생 시에도 로딩 상태 해제
+      setIsLoadingRecipe(false);
       
       // 에러 발생 시에도 기본 봇 응답 표시
       scheduleBotReply(roomId);
@@ -337,27 +383,184 @@ export const useChat = () => {
   };
 
   // 레시피 클릭 시 상세 레시피 메시지 추가 함수
-  const sendRecipeDetail = (roomId, recipe) => {
-    const botMessage = { 
-      role: 'bot', 
-      type: 'recipe-detail', 
-      recipe: {
-        recipeId: recipe.recipeId,
-        title: recipe.title,
-        description: recipe.description,
-        category: recipe.category,
-        imageUrl: recipe.imageUrl,
-        cookingTime: recipe.cookingTime,
-        difficulty: recipe.difficulty
+  const sendRecipeDetail = async (roomId, recipe) => {
+    console.log("=== 레시피 상세 정보 요청 시작 ===");
+    console.log("요청할 레시피:", recipe.title);
+    
+    try {
+      // 로그인 상태 확인
+      if (!requireAuth()) {
+        return;
       }
-    };
-    setChatRooms(prevRooms =>
-      prevRooms.map(room =>
-        room.id === roomId
-          ? { ...room, messages: [...room.messages, botMessage] }
-          : room
-      )
-    );
+      
+      const authInfo = getAuthInfo();
+      if (!authInfo) {
+        return;
+      }
+      
+      const { token, userId } = authInfo;
+      
+      if (!token || !userId) {
+        console.error("JWT 토큰 또는 사용자 ID가 없습니다.");
+        return;
+      }
+      
+      // 로딩 시작
+      setIsLoadingRecipe(true);
+      
+      // 백엔드로 특정 레시피 상세 정보 요청
+      const requestData = {
+        userId: parseInt(userId) || 0,
+        request: `${recipe.title} 레시피`,
+        chatRoomId: roomId,
+        useRefrigerator: false,
+        isSpecificRecipe: true  // 특정 레시피 요청임을 명시
+      };
+      
+      console.log("레시피 상세 요청 데이터:", JSON.stringify(requestData, null, 2));
+      
+      const response = await axios.post(`/api/recipes/request`, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log("=== 레시피 상세 정보 응답 ===");
+      console.log("응답 상태:", response.status);
+      console.log("응답 데이터:", response.data);
+      
+      // 로딩 종료
+      setIsLoadingRecipe(false);
+      
+      // 백엔드 응답 처리
+      if (response.data) {
+        // 새로운 백엔드 응답 형식 처리 (type 필드가 있는 경우)
+        if (response.data.type === 'recipe-detail' && response.data.recipe) {
+          console.log("레시피 상세 응답 감지:", response.data);
+          
+          const botMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: response.data.recipe
+          };
+          
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, botMessage] }
+                : room
+            )
+          );
+          return;
+        }
+        
+        // recipe 객체가 직접 응답으로 오는 경우
+        if (response.data.recipe && response.data.recipe.recipeId) {
+          console.log("레시피 객체 직접 응답 감지:", response.data.recipe);
+          
+          const botMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: response.data.recipe
+          };
+          
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, botMessage] }
+                : room
+            )
+          );
+          return;
+        }
+        
+        // 기존 응답 형식 처리
+        if (response.data.recipeId) {
+          const botMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: {
+              recipeId: response.data.recipeId,
+              title: response.data.title,
+              description: response.data.description,
+              category: response.data.category,
+              imageUrl: response.data.imageUrl,
+              cookingTime: response.data.cookingTime,
+              difficulty: response.data.difficulty
+            }
+          };
+          
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, botMessage] }
+                : room
+            )
+          );
+        } else {
+          console.error("백엔드에서 레시피 상세 정보를 받지 못했습니다.");
+          console.log("전체 응답 데이터:", JSON.stringify(response.data, null, 2));
+          
+          // 에러 시 기존 방식으로 표시
+          const fallbackMessage = { 
+            role: 'bot', 
+            type: 'recipe-detail', 
+            recipe: {
+              recipeId: recipe.recipeId,
+              title: recipe.title,
+              description: recipe.description,
+              category: recipe.category,
+              imageUrl: recipe.imageUrl,
+              cookingTime: recipe.cookingTime,
+              difficulty: recipe.difficulty
+            }
+          };
+          
+          setChatRooms(prevRooms =>
+            prevRooms.map(room =>
+              room.id === roomId
+                ? { ...room, messages: [...room.messages, fallbackMessage] }
+                : room
+            )
+          );
+        }
+      } else {
+        console.error("백엔드 응답이 비어있습니다.");
+      }
+      
+    } catch (error) {
+      console.error("=== 레시피 상세 정보 요청 실패 ===");
+      console.error("에러 상태:", error.response?.status);
+      console.error("에러 데이터:", error.response?.data);
+      console.error("에러 메시지:", error.message);
+      
+      // 에러 발생 시에도 로딩 상태 해제
+      setIsLoadingRecipe(false);
+      
+      // 에러 시 기존 방식으로 표시
+      const fallbackMessage = { 
+        role: 'bot', 
+        type: 'recipe-detail', 
+        recipe: {
+          recipeId: recipe.recipeId,
+          title: recipe.title,
+          description: recipe.description,
+          category: recipe.category,
+          imageUrl: recipe.imageUrl,
+          cookingTime: recipe.cookingTime,
+          difficulty: recipe.difficulty
+        }
+      };
+      
+      setChatRooms(prevRooms =>
+        prevRooms.map(room =>
+          room.id === roomId
+            ? { ...room, messages: [...room.messages, fallbackMessage] }
+            : room
+        )
+      );
+    }
   };
 
   return {
