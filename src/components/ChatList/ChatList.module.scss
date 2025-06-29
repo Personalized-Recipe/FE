@@ -5,48 +5,60 @@
 }
 
 .room {
-    border-radius: 20px;
-    height: 37px;
-    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 5px 0;
-    margin: 5px 0;
-
-}
-
-.room:hover {
-    background-color: #f0f0f0;
+    justify-content: space-between;
+    padding: 10px 16px;
     cursor: pointer;
+    border-radius: 8px;
+    margin: 2px 0;
+    transition: background-color 0.2s;
+    gap: 8px;
+    
+    &:hover {
+        background-color: #f8fafc;
+    }
 }
 
 .room__titleInput {
-    border: 1px solid #fcefef;
     flex: 1;
-    padding: 5px 0;
-    height: 40px;
-
-    &:focus {
-    background-color: #f4f4f4;
-    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #0070ff;
+    border-radius: 4px;
+    padding: 4px 8px;
     outline: none;
-    font-size: 16px;
-  }
-
+    min-width: 0;
 }
 
 .chatWindow__title {
-  display: inline-block;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: middle;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
 }
 
 .selectedRoom {
-  background-color: #e1f0ff;
-  font-weight: 600;
-  color: #0070ff;
+    background-color: #e1f0ff;
+    color: #0070ff;
+}
+
+.deleteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 16px;
+    opacity: 0.6;
+    transition: opacity 0.2s, background-color 0.2s;
+    flex-shrink: 0;
+    
+    &:hover {
+        opacity: 1;
+        background-color: #fee2e2;
+    }
 }

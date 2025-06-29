@@ -30,15 +30,28 @@ export const isLoggedIn = () => {
 
 // 로그인 정보 가져오기
 export const getAuthInfo = () => {
+  console.log("=== getAuthInfo 호출 ===");
+  
   if (!isLoggedIn()) {
+    console.log("로그인 상태가 아닙니다.");
     return null;
   }
   
+  const token = localStorage.getItem("jwt");
+  const userId = localStorage.getItem("userId");
+  const username = localStorage.getItem("username");
+  const profileImage = localStorage.getItem("profileImage");
+  
+  console.log("localStorage에서 가져온 토큰:", token ? `존재 (길이: ${token.length})` : "없음");
+  console.log("localStorage에서 가져온 사용자 ID:", userId || "없음");
+  console.log("localStorage에서 가져온 사용자명:", username || "없음");
+  console.log("localStorage에서 가져온 프로필 이미지:", profileImage || "없음");
+  
   return {
-    token: localStorage.getItem("jwt"),
-    userId: localStorage.getItem("userId"),
-    username: localStorage.getItem("username"),
-    profileImage: localStorage.getItem("profileImage")
+    token: token,
+    userId: userId,
+    username: username,
+    profileImage: profileImage
   };
 };
 

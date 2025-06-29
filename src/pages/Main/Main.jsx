@@ -15,7 +15,9 @@ function Main() {
         sendMessage,
         createChatRoom,
         chatRooms,
-        updateChatTitle
+        updateChatTitle,
+        fetchChatMessages,
+        deleteChatRoom
     } = useChat();
 
     const { ingredients, handleIngredient } = useIngre();
@@ -36,19 +38,22 @@ function Main() {
         setIsSpecificRecipe(prev => !prev);
     };
 
-    const handleSelectChat = (room) => {
+    const handleSelectChat = async (room) => {
         setCurrentRoomId(room.id);
         setInput('');
         setIsLoadingRecipe(false); // 초기화
+        
+        // 채팅방 선택 시 해당 채팅방의 메시지를 백엔드에서 가져오기
+        await fetchChatMessages(room.id);
     };
 
     // 새 채팅방 생성
-    const handleCreateChatRoom = () => {
+    const handleCreateChatRoom = async () => {
         console.log("=== 채팅방 생성 버튼 클릭 ===");
         console.log("현재 채팅방 개수:", chatRooms.length);
         console.log("현재 선택된 채팅방 ID:", currentRoomId);
         
-        const newRoom = createChatRoom();
+        const newRoom = await createChatRoom();
         console.log("생성된 새 채팅방:", newRoom);
         console.log("=== 채팅방 생성 완료 ===");
     };
@@ -63,13 +68,17 @@ function Main() {
             roomId = newRoom.id;
             setCurrentRoomId(roomId);
         } else if (roomId && inputValue) {
-            // 이미 채팅방이 있고, 해당 방의 메시지가 0개면 제목을 입력값으로 변경
+            // 이미 채팅방이 있고, 해당 방의 메시지가 0개이고 기본 제목인 경우에만 제목 변경
             const room = chatRooms.find(r => r.id === roomId);
             if (room && (!room.messages || room.messages.length === 0)) {
-                updateChatTitle(roomId, inputValue);
+                // 기본 제목 패턴인 경우에만 변경 (예: "새 채팅방 1", "새 채팅방 2" 등)
+                const defaultTitlePattern = /^새 채팅방 \d+$/;
+                if (defaultTitlePattern.test(room.title)) {
+                    updateChatTitle(roomId, inputValue);
+                }
             }
         }
-        sendMessage(roomId, showIngredient, isSpecificRecipe);
+        sendMessage(roomId, showIngredient, isSpecificRecipe, inputValue);
         console.log("채팅 전송, 냉장고 사용:", showIngredient);
         console.log("채팅 전송, 특정 레시피 요청:", isSpecificRecipe);
     }
@@ -85,6 +94,7 @@ function Main() {
                     chatRooms={chatRooms}
                     onCreateChatRoom={handleCreateChatRoom}
                     onUpdateTitle={updateChatTitle}
+                    onDeleteChatRoom={deleteChatRoom}
                     currentRoomId={currentRoomId}
                     // 이 정도를 받아야함
                 />
@@ -94,6 +104,8 @@ function Main() {
                     chatTitle={chatTitle} 
                     isLoadingRecipe={isLoadingRecipe} 
                     currentRoomId={currentRoomId}
+                    showIngredient={showIngredient}
+                    input={input}
                     />  
                     <ChatInput 
                         input={input}

@@ -5,13 +5,22 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
     const [imageError, setImageError] = useState(false);
     
     // 디버깅 로그 추가
-    console.log("Message 컴포넌트 렌더링:", { role, type, recipes, recipe });
+    console.log("Message 컴포넌트 렌더링:", { role, content, type, recipes, recipe });
     
     // type이 undefined인 경우 기본값 설정
     const messageType = type || 'text';
     
+    // content가 undefined인 경우 기본값 설정
+    const messageContent = content || '';
+    
     // 줄바꿈을 <br> 태그로 변환
     const formatContent = (text) => {
+        // text가 undefined, null, 또는 빈 문자열인 경우 처리
+        if (!text || typeof text !== 'string') {
+            console.warn("formatContent: text가 유효하지 않습니다:", text);
+            return <span>메시지 내용이 없습니다.</span>;
+        }
+        
         return text.split('\n').map((line, index) => (
             <React.Fragment key={index}>
                 {line}
@@ -24,7 +33,7 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
     if (messageType === 'recipe-list' && Array.isArray(recipes)) {
         console.log("레시피 리스트 메시지 렌더링");
         return (
-            <div className={styles.message}>
+            <div className={`${styles.message} ${role === 'user' ? styles.userMessage : styles.botMessage}`}>
                 <div className={styles.recommendationHeader}>
                     <h4>🍽️ 추천 메뉴</h4>
                     <p>원하는 메뉴를 클릭하면 상세 레시피를 확인할 수 있습니다</p>
@@ -65,7 +74,7 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
         console.log("=== 레시피 상세 메시지 렌더링 완료 ===");
         
         return (
-            <div className={styles.recipeDetailMessage}>
+            <div className={`${styles.message} ${role === 'user' ? styles.userMessage : styles.botMessage}`}>
                 <div className={styles.recipeDetailBox}>
                     <div className={styles.recipeHeader}>
                         <h3 className={styles.recipeTitle}>{recipe.title}</h3>
@@ -104,7 +113,7 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
     return (
         <div className={`${styles.message}`}>
             <div className={`${styles.message__content} ${role === 'user' ? styles.user : styles.bot}`}>
-                {formatContent(content)}
+                {formatContent(messageContent)}
             </div>
         </div>
     );

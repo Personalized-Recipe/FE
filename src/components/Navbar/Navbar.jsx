@@ -11,7 +11,7 @@ function Navbar({ onClickLogin }) {
         <div className={styles.navbar}>
             <div className={styles.navbar__logo}>
                 <img src="/logo.svg" alt="로고" />
-                <p> 만개의 레시피</p>
+                <p> Personalized Recipe</p>
             </div>
             {!isMainPage && (<button className={styles.sign_up} onClick={onClickLogin}>간편 로그인</button>)}
             {isMainPage && (<div className={styles.navbar__links}>

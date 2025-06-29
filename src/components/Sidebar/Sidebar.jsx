@@ -3,7 +3,7 @@ import styles from "./Sidebar.module.scss";
 import ChatList from "../ChatList/ChatList";
 import { sortByCreatedAt } from "../../utils/sort";
 
-function Sidebar({chatRooms, onSelectChat, onCreateChatRoom, showIngredient, ingredients, onUpdateTitle, currentRoomId}) {
+function Sidebar({chatRooms, onSelectChat, onCreateChatRoom, showIngredient, ingredients, onUpdateTitle, onDeleteChatRoom, currentRoomId}) {
     const [sortOrder, setSortOrder] = useState("recent");
     
 
@@ -50,6 +50,7 @@ function Sidebar({chatRooms, onSelectChat, onCreateChatRoom, showIngredient, ing
                         chatRooms={chatRooms} 
                         onSelectChat={onSelectChat}
                         onUpdateTitle={onUpdateTitle}
+                        onDeleteChatRoom={onDeleteChatRoom}
                         currentRoomId={currentRoomId}
                     />)}
         </div>

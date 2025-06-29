@@ -3,6 +3,14 @@
     margin: 10px 16px;
 }
 
+.userMessage {
+    justify-content: flex-end;
+}
+
+.botMessage {
+    justify-content: flex-start;
+}
+
 .message__content {
     padding: 10px 14px;
     font-size: 14px;

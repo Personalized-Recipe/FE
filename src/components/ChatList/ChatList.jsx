@@ -1,7 +1,7 @@
 import React,{ useState } from "react";
 import styles from './ChatList.module.scss';
 
-function ChatList({ chatRooms, onSelectChat, onUpdateTitle, currentRoomId }) {
+function ChatList({ chatRooms, onSelectChat, onUpdateTitle, onDeleteChatRoom, currentRoomId }) {
     const [editingRooms, setEditingRooms] = useState({});
 
     const handleEdit = (roomId) => {
@@ -12,12 +12,19 @@ function ChatList({ chatRooms, onSelectChat, onUpdateTitle, currentRoomId }) {
         setEditingRooms(prev => ({ ...prev, [roomId]: false }));
     };
 
-      const handleChange = (e, room) => {
+    const handleChange = (e, room) => {
         onUpdateTitle(room.id, e.target.value);
     }
 
     const handleRoomClick = (room) => {
         onSelectChat(room);
+    }
+
+    const handleDelete = (e, roomId) => {
+        e.stopPropagation(); // 클릭 이벤트 전파 방지
+        if (window.confirm('정말로 이 채팅방을 삭제하시겠습니까?')) {
+            onDeleteChatRoom(roomId);
+        }
     }
 
     return(
@@ -56,6 +63,13 @@ function ChatList({ chatRooms, onSelectChat, onUpdateTitle, currentRoomId }) {
                             {room.title || "새 채팅방"}
                         </span>
                     )}
+                    <button 
+                        className={styles.deleteButton}
+                        onClick={(e) => handleDelete(e, room.id)}
+                        title="채팅방 삭제"
+                    >
+                        🗑️
+                    </button>
                 </div>
             ))}
         </div>
