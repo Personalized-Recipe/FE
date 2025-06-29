@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyIngre.module.scss";
 import useList from "../../../utils/useList";
+import { useIngre } from "../../../utils/useIngre";
 
-// 초기값 로드 함수
+// 초기값 로드 함수 (로컬 스토리지 폴백용)
 const loadInitialIngredients = () => {
   const saved = localStorage.getItem("MyIngre");
   if (!saved) return [];
@@ -19,7 +20,9 @@ function MyIngre() {
   const [unit, setUnit] = useState("");
   const [tempName, setTempName] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
-  const [ingredients, addIngredient, updateIngredient, removeIngredient,, ] = useList(loadInitialIngredients(), ['name', 'amount', 'unit']);
+  
+  // 데이터베이스 API 훅 사용
+  const { ingredients, addIngredientToDB, updateIngredientInDB, deleteIngredientFromDB, loading } = useIngre();
 
   const inputRef = useRef(null);
   const amountRef = useRef(null);
@@ -29,10 +32,6 @@ function MyIngre() {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("MyIngre", JSON.stringify(ingredients));
-  }, [ingredients]);
 
   // 재료 입력
   const handleAdd = () => {
@@ -44,8 +43,25 @@ function MyIngre() {
   };
 
   // 재료 삭제
-  const handleDelete = (index) => {
-    removeIngredient(index);
+  const handleDelete = async (index) => {
+    const item = ingredients[index];
+    console.log("삭제할 재료:", item); // 디버깅용
+    
+    // 데이터베이스에서 삭제 시도
+    if (item.id) {
+      const success = await deleteIngredientFromDB(item.id);
+      if (success) {
+        console.log("데이터베이스에서 재료 삭제 성공");
+      } else {
+        console.log("데이터베이스에서 재료 삭제 실패, 로컬에서만 삭제");
+      }
+    } else {
+      console.log("재료 ID가 없어서 로컬에서만 삭제합니다.");
+    }
+    
+    // 로컬에서도 삭제 (임시로 배열에서 제거)
+    const updatedIngredients = ingredients.filter((_, i) => i !== index);
+    localStorage.setItem("MyIngre", JSON.stringify(updatedIngredients));
   };
 
   // 재료 단위 변경
@@ -57,7 +73,7 @@ function MyIngre() {
   }
 
   // 재료 추가
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (! tempName || !amount || !unit) return;
 
     const newItem = { name: tempName, amount, unit, createdAt: new Date().toISOString() };
@@ -65,14 +81,38 @@ function MyIngre() {
     if (editingIndex !== null) {
       // 수정 모드
       const updated = ingredients[editingIndex];
-      updateIngredient(editingIndex, { ...newItem, createdAt: updated.createdAt });
+      console.log("수정할 기존 재료:", updated); // 디버깅용
+      const updatedItem = { ...newItem, createdAt: updated.createdAt };
+      
+      // 데이터베이스에서 수정 시도
+      if (updated.id) {
+        const success = await updateIngredientInDB(updated.id, updatedItem);
+        if (success) {
+          console.log("데이터베이스에서 재료 수정 성공");
+        } else {
+          console.log("데이터베이스에서 재료 수정 실패, 로컬에서만 수정");
+        }
+      } else {
+        console.log("재료 ID가 없어서 로컬에서만 수정합니다.");
+      }
+      
+      // 로컬에서도 수정 (임시로 배열 업데이트)
+      const updatedIngredients = [...ingredients];
+      updatedIngredients[editingIndex] = updatedItem;
+      localStorage.setItem("MyIngre", JSON.stringify(updatedIngredients));
       setEditingIndex(null);
     } else {
       // 추가 모드
-      const added = addIngredient(newItem);
-      if (!added) {
-        alert("이미 등록한 재료입니다.");
-        return;
+      // 데이터베이스에 추가 시도
+      const success = await addIngredientToDB(newItem);
+      if (success) {
+        console.log("데이터베이스에 재료 추가 성공");
+        // 성공 시 로컬 상태는 useIngre 훅에서 자동으로 업데이트됨
+      } else {
+        console.log("데이터베이스에 재료 추가 실패, 로컬에서만 추가");
+        // 실패 시 로컬에서만 추가
+        const updatedIngredients = [...ingredients, newItem];
+        localStorage.setItem("MyIngre", JSON.stringify(updatedIngredients));
       }
     }
 
@@ -86,15 +126,21 @@ function MyIngre() {
   // 재료 수정 
   const handleEdit = (index) => {
     const item = ingredients[index];
-    setTempName(item.name);
-    setAmount(item.amount);
-    setUnit(item.unit);
+    console.log("수정할 재료:", item); // 디버깅용
+    
+    // name 필드가 없을 경우 ingredientName 필드도 확인
+    const itemName = item.name || item.ingredientName || "";
+    
+    setTempName(itemName);
+    setAmount(item.amount || "");
+    setUnit(item.unit || "");
     setEditingIndex(index);
   }
 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>🥕 장바구니 🥕</h2>
+      {loading && <div className={styles.loading}>저장 중...</div>}
       <div className={styles.inputContainer}>
         <input
           className= {styles.input}
@@ -115,7 +161,7 @@ function MyIngre() {
         <div className={styles.itemContainer}>
           {ingredients.map((item, idx) => (
             <div className={styles.Item} key={idx} onClick={() => handleEdit(idx)}>
-              {item.name} {item.amount}{item.unit}
+              {item.name || item.ingredientName || "이름 없음"} {item.amount}{item.unit}
               {editingIndex === idx && (
                 <button className={styles.deleteBtn} onClick={(e) => {
                   e.stopPropagation(); // 클릭 방지
@@ -155,8 +201,8 @@ function MyIngre() {
               <option value="ml">ml</option>
             </select>
           </div>
-          <button className={styles.addButton} onClick={handleConfirm}>
-            {editingIndex !== null ? "수정하기" : "추가하기"}
+          <button className={styles.addButton} onClick={handleConfirm} disabled={loading}>
+            {loading ? "저장 중..." : (editingIndex !== null ? "수정하기" : "추가하기")}
           </button>
         </div>
       </div>

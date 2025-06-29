@@ -9,6 +9,22 @@
     gap: 30px;
 }
 
+.loading {
+    background-color: #0070ff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
 .inputContainer {
     display: flex;
     width: 90%;
@@ -100,6 +116,11 @@
     border-radius: 10px;
     border: none;
     cursor: pointer;
+    
+    &:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
 }
 
 .itemContainer {
@@ -159,4 +180,32 @@
 
 .title {
   margin: 0;
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.syncButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover:not(:disabled) {
+    background-color: #218838;
+  }
+  
+  &:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
 }

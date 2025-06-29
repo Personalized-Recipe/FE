@@ -7,6 +7,9 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
     // 디버깅 로그 추가
     console.log("Message 컴포넌트 렌더링:", { role, type, recipes, recipe });
     
+    // type이 undefined인 경우 기본값 설정
+    const messageType = type || 'text';
+    
     // 줄바꿈을 <br> 태그로 변환
     const formatContent = (text) => {
         return text.split('\n').map((line, index) => (
@@ -18,7 +21,8 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
     };
 
     // 레시피 리스트 메시지 (요리명 버튼들)
-    if (type === 'recipe-list' && Array.isArray(recipes)) {
+    if (messageType === 'recipe-list' && Array.isArray(recipes)) {
+        console.log("레시피 리스트 메시지 렌더링");
         return (
             <div className={styles.message}>
                 <div className={styles.recommendationHeader}>
@@ -53,12 +57,16 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
     }
 
     // 레시피 상세 메시지 (이미지, 카테고리, 조리시간, 난이도 포함)
-    if (type === 'recipe-detail' && recipe) {
+    if (messageType === 'recipe-detail' && recipe) {
+        console.log("=== 레시피 상세 메시지 렌더링 시작 ===");
         console.log("레시피 상세 메시지 렌더링:", recipe.title);
+        console.log("type:", messageType);
+        console.log("recipe:", recipe);
+        console.log("=== 레시피 상세 메시지 렌더링 완료 ===");
+        
         return (
             <div className={styles.recipeDetailMessage}>
                 <div className={styles.recipeDetailBox}>
-                    <div style={{color: 'red', fontWeight: 'bold'}}>DEBUG: 레시피 상세 메시지가 렌더링됨</div>
                     <div className={styles.recipeHeader}>
                         <h3 className={styles.recipeTitle}>{recipe.title}</h3>
                         <div className={styles.recipeMeta}>
@@ -91,7 +99,8 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
         );
     }
 
-    // 기존 일반 메시지
+    // 기존 일반 메시지 (text 타입 또는 type이 없는 경우)
+    console.log("일반 메시지 렌더링:", { role, content, type: messageType });
     return (
         <div className={`${styles.message}`}>
             <div className={`${styles.message__content} ${role === 'user' ? styles.user : styles.bot}`}>

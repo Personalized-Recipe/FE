@@ -5,17 +5,17 @@ function ChatInput({input, setInput, onSend, onToggleIngredient, isSpecificRecip
     return(
         <div className={styles.chatInput}>
             <div className={styles.checkboxGroup}>
-                <label className={styles["hover-area"]}>
-                    <input
-                        type="checkbox"
-                        className={styles["checkbox"]}
-                        onChange={onToggleIngredient}
-                    />
-                    <span className={styles["label-text"]}>냉장고</span>
-                    <div className={styles["tooltip"]}>
-                        내가 등록한 재료를 기반으로 추천을 받을 수 있어요
-                    </div>
-                </label>
+            <label className={styles["hover-area"]}>
+                <input
+                    type="checkbox"
+                    className={styles["checkbox"]}
+                    onChange={onToggleIngredient}
+                />
+                <span className={styles["label-text"]}>냉장고</span>
+                <div className={styles["tooltip"]}>
+                    내가 등록한 재료를 기반으로 추천을 받을 수 있어요
+                </div>
+            </label>
                 <label className={styles["hover-area"]}>
                     <input
                         type="checkbox"
