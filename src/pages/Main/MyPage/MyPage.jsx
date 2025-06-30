@@ -50,9 +50,9 @@ function MyPage({onClose, setIsEdited, showAlert, setShowAlert}) {
             nickname: nickname,
             age,
             gender,
-            pregnant: isPregnant === "예" ? true : false,
+            isPregnant: isPregnant === "예" ? true : false,
             allergy: allergyList.join(", "),
-            health: healthList.join(", "),
+            healthStatus: healthList.join(", "),
             preference: preferList.join(", "),
             isUpdate: true // 수정임을 나타내는 플래그
         };

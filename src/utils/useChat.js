@@ -492,15 +492,21 @@ export const useChat = () => {
 
   // 메뉴 추천 텍스트를 파싱해서 레시피 리스트로 변환하는 함수
   const parseMenuRecommendation = (text) => {
+    console.log("=== parseMenuRecommendation 시작 ===");
+    console.log("파싱할 텍스트:", text);
+    
     const recipes = [];
     
-    // **숫자. 메뉴명** 패턴을 찾아서 파싱
+    // 백엔드에서 이미 파싱된 상세 정보가 있는지 확인
+    // "**숫자. 메뉴명**" 패턴을 찾아서 파싱
     const menuPattern = /\*\*(\d+)\.\s*([^*]+)\*\*/g;
     let match;
     
     while ((match = menuPattern.exec(text)) !== null) {
       const menuNumber = parseInt(match[1]);
       const menuTitle = match[2].trim();
+      
+      console.log(`메뉴 ${menuNumber} 파싱: ${menuTitle}`);
       
       // 해당 메뉴의 상세 정보 추출
       const menuStartIndex = match.index;
@@ -510,6 +516,8 @@ export const useChat = () => {
       
       const menuEndIndex = nextMatch ? nextMatch.index : text.length;
       const menuDetailText = text.substring(menuStartIndex + match[0].length, menuEndIndex).trim();
+      
+      console.log(`메뉴 ${menuNumber} 상세 정보:`, menuDetailText.substring(0, 100) + "...");
       
       // 카테고리, 조리시간, 난이도 추출
       const categoryMatch = menuDetailText.match(/- 카테고리:\s*([^\n]+)/);
@@ -543,12 +551,44 @@ export const useChat = () => {
         category: categoryMatch ? categoryMatch[1].trim() : "기타",
         imageUrl: null, // 이미지 URL은 백엔드에서 제공하지 않음
         cookingTime: timeMatch ? timeMatch[1].trim() : "정보 없음",
-        difficulty: difficultyMatch ? difficultyMatch[1].trim() : "정보 없음"
+        difficulty: difficultyMatch ? difficultyMatch[1].trim() : "정보 없음",
+        hasDetailedInfo: cookingGuide.trim().length > 50 // 상세 정보가 충분한지 판단
       };
       
+      console.log(`레시피 ${menuNumber} 생성 완료:`, recipe);
       recipes.push(recipe);
     }
     
+    // 만약 **패턴으로 파싱되지 않았다면, 일반적인 메뉴 추천 형태로 파싱
+    if (recipes.length === 0) {
+      console.log("**패턴으로 파싱되지 않음. 일반 메뉴 추천 형태로 파싱 시도");
+      
+      // "1. 메뉴명", "2. 메뉴명" 형태로 파싱
+      const simpleMenuPattern = /^(\d+)\.\s*([^\n]+)/gm;
+      let simpleMatch;
+      
+      while ((simpleMatch = simpleMenuPattern.exec(text)) !== null) {
+        const menuNumber = parseInt(simpleMatch[1]);
+        const menuTitle = simpleMatch[2].trim();
+        
+        console.log(`간단 메뉴 ${menuNumber} 파싱: ${menuTitle}`);
+        
+        const recipe = {
+          recipeId: menuNumber,
+          title: menuTitle,
+          description: `${menuTitle}의 상세 레시피를 확인하려면 클릭해주세요.`,
+          category: "기타",
+          imageUrl: null,
+          cookingTime: "정보 없음",
+          difficulty: "정보 없음",
+          hasDetailedInfo: false
+        };
+        
+        recipes.push(recipe);
+      }
+    }
+    
+    console.log("=== parseMenuRecommendation 완료 ===");
     console.log("파싱된 레시피 개수:", recipes.length);
     recipes.forEach((recipe, index) => {
       console.log(`레시피 ${index + 1}:`, recipe);
@@ -632,7 +672,7 @@ export const useChat = () => {
         return;
       }
 
-      // 사용자 메시지 즉시 추가
+      // 사용자 메시지 즉시 추가 (UX를 위해)
       const userMessage = { 
         role: 'user', 
         type: 'text',
@@ -670,7 +710,7 @@ export const useChat = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        timeout: 10000
+        timeout: 60000
       });
       
       console.log("API 요청 완료!");
@@ -679,12 +719,11 @@ export const useChat = () => {
       console.log("응답 상태:", response.status);
       console.log("응답 데이터:", response.data);
       
-      // 메시지 추가 후 채팅방을 새로 조회하여 모든 데이터를 가져옴
-      console.log("채팅방 메시지 다시 가져오기 시작...");
-      
       // 백엔드 DB 저장이 완료될 시간을 주기 위해 약간의 지연
       await new Promise(resolve => setTimeout(resolve, 500));
       
+      // 백엔드 응답 후에만 채팅방을 새로 조회하여 봇 메시지 추가
+      console.log("채팅방 메시지 다시 가져오기 시작...");
       await fetchChatMessages(roomId);
       console.log("채팅방 메시지 다시 가져오기 완료");
       
@@ -773,63 +812,45 @@ export const useChat = () => {
       return;
     }
     
+    // 사용자 메시지 즉시 추가 (UX를 위해)
+    const userMessage = {
+      role: 'user',
+      type: 'text',
+      content: inputValue || `${recipe.title} 레시피 알려줘`
+    };
+    
+    setChatRooms(prevRooms => {
+      const updatedRooms = prevRooms.map(room =>
+        room.id === roomId
+          ? { ...room, messages: [...(room.messages || []), userMessage] }
+          : room
+      );
+      console.log("사용자 메시지 추가 후 채팅방 상태:", updatedRooms);
+      return updatedRooms;
+    });
+    
     // 로딩 상태 설정
     setIsLoadingRecipe(true);
     
     try {
-      // 사용자 메시지 즉시 추가
-      const userMessage = {
-        role: 'user',
-        type: 'text',
-        content: inputValue || `${recipe.title} 레시피 알려줘`
-      };
-      
-      console.log("사용자 메시지 추가 전 chatRooms 상태:", chatRooms);
-      
-      setChatRooms(prevRooms => {
-        const updatedRooms = prevRooms.map(room =>
-          room.id === roomId
-            ? { ...room, messages: [...(room.messages || []), userMessage] }
-            : room
-        );
-        console.log("사용자 메시지 추가 후 채팅방 상태:", updatedRooms);
-        return updatedRooms;
-      });
-      
-      // recipe.recipeId가 있으면 DB에서 상세 정보 조회, 없으면 AI 요청
-      if (recipe.recipeId && recipe.hasDetailedInfo) {
-        console.log("DB에서 상세 레시피 정보 조회:", recipe.recipeId);
+      // 이미 상세 정보가 있는 경우 (description이 충분히 긴 경우)
+      if (recipe.description && recipe.description.length > 100) {
+        console.log("이미 파싱된 상세 정보 사용:", recipe.title);
         
-        // DB에서 상세 레시피 정보 조회
-        const response = await axios.get(`/api/recipes/${recipe.recipeId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 10000
-        });
-        
-        console.log("=== DB 레시피 조회 응답 수신 ===");
-        console.log("응답 상태:", response.status);
-        console.log("응답 데이터:", response.data);
-        
-        // 상세 레시피 정보를 채팅 메시지로 추가
-        const detailedRecipe = response.data;
+        // 상세 레시피 메시지 즉시 추가
         const botMessage = {
           role: 'bot',
           type: 'recipe-detail',
           recipe: {
-            recipeId: detailedRecipe.recipeId,
-            title: detailedRecipe.title,
-            description: detailedRecipe.description,
-            category: detailedRecipe.category,
-            imageUrl: detailedRecipe.imageUrl,
-            cookingTime: detailedRecipe.cookingTime,
-            difficulty: detailedRecipe.difficulty
+            recipeId: recipe.recipeId,
+            title: recipe.title,
+            description: recipe.description,
+            category: recipe.category || '기타',
+            imageUrl: recipe.imageUrl || 'https://i.imgur.com/8tMUxoP.jpg',
+            cookingTime: recipe.cookingTime || '정보 없음',
+            difficulty: recipe.difficulty || '정보 없음'
           }
         };
-        
-        console.log("추가할 봇 메시지:", botMessage);
         
         setChatRooms(prevRooms => {
           const updatedRooms = prevRooms.map(room =>
@@ -860,52 +881,21 @@ export const useChat = () => {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          timeout: 10000
+          timeout: 60000
         });
         
         console.log("=== 백엔드 응답 수신 ===");
         console.log("응답 상태:", response.status);
         console.log("응답 데이터:", response.data);
         
-        // 백엔드 응답을 프론트엔드 메시지로 즉시 추가
-        const responseData = response.data;
-        let botMessage;
+        // 백엔드 DB 저장이 완료될 시간을 주기 위해 약간의 지연
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        if (responseData.type === 'recipe-detail' && responseData.recipe) {
-          botMessage = {
-            role: 'bot',
-            type: 'recipe-detail',
-            recipe: responseData.recipe
-          };
-        } else {
-          botMessage = {
-            role: 'bot',
-            type: 'text',
-            content: '레시피 정보를 찾을 수 없습니다.'
-          };
-        }
-        
-        console.log("추가할 봇 메시지:", botMessage);
-        
-        setChatRooms(prevRooms => {
-          const updatedRooms = prevRooms.map(room =>
-            room.id === roomId
-              ? { ...room, messages: [...(room.messages || []), botMessage] }
-              : room
-          );
-          console.log("AI 응답 메시지 추가 후 채팅방 상태:", updatedRooms);
-          return updatedRooms;
-        });
+        // 백엔드 응답 후에만 채팅방을 새로 조회하여 봇 메시지 추가
+        console.log("채팅방 메시지 다시 가져오기 시작...");
+        await fetchChatMessages(roomId);
+        console.log("채팅방 메시지 다시 가져오기 완료");
       }
-      
-      // 메시지 추가 후 채팅방을 새로 조회하여 모든 데이터를 가져옴
-      console.log("채팅방 메시지 다시 가져오기 시작...");
-      
-      // 백엔드 DB 저장이 완료될 시간을 주기 위해 약간의 지연
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      await fetchChatMessages(roomId);
-      console.log("채팅방 메시지 다시 가져오기 완료");
       
       // 로딩 상태 해제
       setIsLoadingRecipe(false);

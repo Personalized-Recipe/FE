@@ -94,9 +94,9 @@ const NewUser = () => {
             nickname,
             age,
             gender: selectedGender === "male" ? "M" : selectedGender === "female" ? "F" : null,
-            pregnant: pregnantStatus,
+            isPregnant: pregnantStatus === "pregnant" ? true : false,
             allergy: selectedAllergies.join(", "),
-            health: healthInfo,
+            healthStatus: healthInfo,
             preference: preferFood
         };
 
