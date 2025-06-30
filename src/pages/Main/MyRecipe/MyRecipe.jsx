@@ -1,24 +1,73 @@
 import React, { useState, useEffect } from "react";
 import styles from './MyRecipe.module.scss';
-import useList from "../../../utils/useList";
+import axios from "axios";
+// import useList from "../../../utils/useList";
 
 function MyRecipe() {
-    const stored = () => {
-        return JSON.parse(localStorage.getItem("myRecipes")) || [];
-    }
+    // const stored = () => {
+    //     return JSON.parse(localStorage.getItem("myRecipes")) || [];
+    // }
 
+    // if (!token || !userId) return;
+    const token = localStorage.getItem("jwt");
+    const userId = localStorage.getItem("userId");
+
+    const [myRecipes, setMyRecipes] = useState([]);
     const [selected, setSelected] = useState(null);
-    const [myRecipes, , ,removeRecipe,] = useList(stored(),['id']);
+    // const [myRecipes, , ,removeRecipe,] = useList(stored(),['id']);
 
+
+    // useEffect(() => {
+    //     localStorage.setItem("myRecipes", JSON.stringify(myRecipes));
+    // }, [myRecipes]);
+
+    // const handleDelete = () => {
+    //     if (selected === null) return;
+
+    //     setSelected(null);
+    //     removeRecipe(selected);
+    // };
+
+    // 서버에서 저장된 레시피 목록 불러오기
     useEffect(() => {
-        localStorage.setItem("myRecipes", JSON.stringify(myRecipes));
-    }, [myRecipes]);
+        if (!token || !userId) return;
 
-    const handleDelete = () => {
+        const fetchRecipes = async () => {
+            try {
+                const response = await axios.get(`/api/recipes/saved/${userId}`, {
+                    headers: {
+                     'Authorization': `Bearer ${token}` ,
+                     'Content-Type': `application/json`
+                    }
+                });
+                setMyRecipes(response.data);
+            } catch (err) {
+                console.error("레시피 목록 불러오기 실패:", err);
+            }
+        };
+        fetchRecipes();
+    }, [userId, token]);
+
+    const handleDelete = async () => {
         if (selected === null) return;
 
-        setSelected(null);
-        removeRecipe(selected);
+        const recipeId = myRecipes[selected]?.recipeId;
+        try {
+            await axios.delete(`/api/recipes/delete/${userId}/${recipeId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            // 삭제 후 목록에서 제거
+            const updated = [...myRecipes];
+            updated.splice(selected, 1);
+            setMyRecipes(updated);
+            setSelected(null);
+        } catch (err) {
+            console.error("레시피 삭제 실패:", err);
+            alert("삭제 중 문제가 발생했습니다.");
+        }
     };
 
     return(
@@ -42,7 +91,7 @@ function MyRecipe() {
                     {selected !== null ? (
                         <>
                             <h3>{myRecipes[selected].title}</h3>
-                            <p>{myRecipes[selected].content}</p>
+                            <p>{myRecipes[selected]?.description || "내용 없음"}</p>
                             <button className={styles["recipe-delete"]} onClick={handleDelete}>내 레시피 북에서 지우기</button>
                         </>
                     ) : (

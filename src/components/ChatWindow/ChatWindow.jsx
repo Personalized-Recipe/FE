@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import styles from "./ChatWindow.module.scss";
-import Message from '../Message/Message';
+// import Message from '../Message/Message';
+import Message from '../Message';
 import { useChat } from '../../utils/useChat';
 
 function ChatWindow({messages, chatTitle, isLoadingRecipe, currentRoomId, showIngredient, input}) {

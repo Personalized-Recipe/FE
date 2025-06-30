@@ -1,6 +1,6 @@
 .message {
     display: flex;
-    margin: 10px 16px;
+    margin: 50px 20px;
 }
 
 .userMessage {
@@ -38,7 +38,6 @@
 .recipeListBox {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
     margin: 10px 0;
 }
 
@@ -61,7 +60,6 @@
     background: #f8fafc;
     border-radius: 12px;
     box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
-    padding: 10px 16px;
     font-size: 15px;
     font-weight: 500;
     color: #0070ff;
@@ -70,6 +68,7 @@
     margin: 2px 0;
     transition: box-shadow 0.2s, background 0.2s, color 0.2s;
     min-width: 120px;
+    height: 105px;
     position: relative;
 }
 
@@ -84,15 +83,6 @@
     color: #005bd1;
     border-color: #0070ff;
     box-shadow: 0 4px 16px 0 rgba(0,112,255,0.12);
-}
-
-.toggleIcon {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 12px;
-    color: #0070ff;
-    font-weight: bold;
 }
 
 .recipeBtnContent {
@@ -176,8 +166,8 @@
     overflow: hidden;
     
     img {
-        width: 100%;
-        height: 200px;
+        width: 200px;
+        height: 100px;
         object-fit: cover;
         border-radius: 12px;
     }
@@ -220,8 +210,8 @@
 }
 
 .recommendationHeader {
-    margin-bottom: 16px;
     padding: 12px 16px;
+    width: 650px;
     background: linear-gradient(135deg, #f8fafc 0%, #e1f0ff 100%);
     border-radius: 12px;
     border: 1px solid #e1f0ff;
@@ -291,14 +281,12 @@
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 10px 20px;
+    width: 120px;
+    height: 35px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
 }
 
 .saveRecipeBtn:hover {
