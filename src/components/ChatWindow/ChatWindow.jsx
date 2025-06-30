@@ -61,6 +61,7 @@ function ChatWindow({messages, chatTitle, isLoadingRecipe, currentRoomId, showIn
                             {...msg}
                             roomId={currentRoomId}
                             onRecipeClick={handleRecipeClick}
+                            messageIndex={idx}
                     />
                     ))}
                     {isLoadingRecipe && (

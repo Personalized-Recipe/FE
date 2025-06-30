@@ -39,14 +39,19 @@
     display: flex;
     gap: 10px;
     margin: 10px 0;
+    max-width: 680px;
+    justify-content:space-around;
 }
 
-.recipeItem {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-}
+// .recipeItem {
+//     display: flex;
+//     flex-direction: column;
+//     gap: 10px;
+//     width: 100%;
+//     max-width: 400px;
+//     display: inline-block;
+
+// }
 
 .recipeDetailInline {
     margin-top: 10px;

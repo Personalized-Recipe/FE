@@ -1,74 +1,119 @@
 import React, { useState, useEffect } from "react";
 import styles from './MyRecipe.module.scss';
 import axios from "axios";
-// import useList from "../../../utils/useList";
 
 function MyRecipe() {
-    // const stored = () => {
-    //     return JSON.parse(localStorage.getItem("myRecipes")) || [];
-    // }
-
-    // if (!token || !userId) return;
-    const token = localStorage.getItem("jwt");
-    const userId = localStorage.getItem("userId");
-
     const [myRecipes, setMyRecipes] = useState([]);
     const [selected, setSelected] = useState(null);
-    // const [myRecipes, , ,removeRecipe,] = useList(stored(),['id']);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-
-    // useEffect(() => {
-    //     localStorage.setItem("myRecipes", JSON.stringify(myRecipes));
-    // }, [myRecipes]);
-
-    // const handleDelete = () => {
-    //     if (selected === null) return;
-
-    //     setSelected(null);
-    //     removeRecipe(selected);
-    // };
-
-    // 서버에서 저장된 레시피 목록 불러오기
-    useEffect(() => {
-        if (!token || !userId) return;
-
-        const fetchRecipes = async () => {
-            try {
-                const response = await axios.get(`/api/recipes/saved/${userId}`, {
-                    headers: {
-                     'Authorization': `Bearer ${token}` ,
-                     'Content-Type': `application/json`
-                    }
-                });
-                setMyRecipes(response.data);
-            } catch (err) {
-                console.error("레시피 목록 불러오기 실패:", err);
+    // 저장된 레시피 목록 가져오기
+    const fetchMyRecipes = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            
+            const token = localStorage.getItem("jwt");
+            const userId = localStorage.getItem("userId");
+            
+            if (!token || !userId) {
+                setError("로그인이 필요합니다.");
+                return;
             }
-        };
-        fetchRecipes();
-    }, [userId, token]);
+            
+            const response = await axios.get(`/api/recipes/history/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            // UserRecipe 목록을 Recipe 상세 정보로 변환
+            const recipePromises = response.data.map(async (userRecipe) => {
+                try {
+                    const recipeResponse = await axios.get(`/api/recipes/${userRecipe.recipeId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    return recipeResponse.data;
+                } catch (error) {
+                    console.error(`레시피 ${userRecipe.recipeId} 조회 실패:`, error);
+                    return null;
+                }
+            });
+            
+            const recipes = await Promise.all(recipePromises);
+            const validRecipes = recipes.filter(recipe => recipe !== null);
+            
+            setMyRecipes(validRecipes);
+        } catch (error) {
+            console.error("저장된 레시피 조회 실패:", error);
+            setError("저장된 레시피를 불러오는데 실패했습니다.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    // 레시피 삭제
     const handleDelete = async () => {
         if (selected === null) return;
 
-        const recipeId = myRecipes[selected]?.recipeId;
         try {
+            const token = localStorage.getItem("jwt");
+            const userId = localStorage.getItem("userId");
+            const recipeId = myRecipes[selected].recipeId;
+            
+            if (!token || !userId) {
+                alert("로그인이 필요합니다.");
+                return;
+            }
+            
             await axios.delete(`/api/recipes/delete/${userId}/${recipeId}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
-
-            // 삭제 후 목록에서 제거
-            const updated = [...myRecipes];
-            updated.splice(selected, 1);
-            setMyRecipes(updated);
+            
+            alert("레시피가 삭제되었습니다.");
             setSelected(null);
-        } catch (err) {
-            console.error("레시피 삭제 실패:", err);
-            alert("삭제 중 문제가 발생했습니다.");
+            // 목록 새로고침
+            fetchMyRecipes();
+        } catch (error) {
+            console.error("레시피 삭제 실패:", error);
+            alert("레시피 삭제에 실패했습니다.");
         }
     };
+
+    useEffect(() => {
+        fetchMyRecipes();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className={styles.myrecipe}>
+                <p className={styles.myrecipe__header}>📖 나의 레시피 북 📖</p>
+                <div className={styles.myrecipe__content}>
+                    <p>로딩 중...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className={styles.myrecipe}>
+                <p className={styles.myrecipe__header}>📖 나의 레시피 북 📖</p>
+                <div className={styles.myrecipe__content}>
+                    <p style={{ color: 'red' }}>{error}</p>
+                    <button onClick={fetchMyRecipes}>다시 시도</button>
+                </div>
+            </div>
+        );
+    }
 
     return(
         <div className={styles.myrecipe}>

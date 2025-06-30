@@ -40,28 +40,20 @@
     height: 500px;
     display: flex;
     justify-content: center;
+    gap: 5px;
 }
 
 .recipe__list {
-    width: 35%;
+    width: 40%;
     overflow-y: scroll;
-    p {
-        width: 200px;
-        font-size: 18px;
-        font-weight: 500;
-        text-align: center;
-        margin-top: 20px;
-        color: #565656;
-    }
 }
 
 .recipe {
     background-color: #f8fafc;
     border-radius: 12px;
     box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
-    padding: 14px 18px;
-    margin: 6px 0;
-    width: 90%;
+    padding: 14px 20px;
+    margin: 5px 0;
     font-size: 16px;
     font-weight: 500;
     color: #222;
@@ -86,6 +78,7 @@
 .recipe__info {
     background-color: #fff;
     border-radius: 16px;
+    border:1px solid rgb(233, 233, 233);
     box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
     width: 100%;
     max-width: 400px;

@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from "./Message.module.scss";
 
 function RecipeDetailMessage({ role, recipe }) {
     const [saving, setSaving] = useState(false);
     const [imageError, setImageError] = useState(false);
+
+    useEffect(() => {
+        setSaving(false);
+        setImageError(false);
+    }, [recipe]);
 
     const handleSave = async () => {
         setSaving(true);
@@ -51,7 +56,11 @@ function RecipeDetailMessage({ role, recipe }) {
             </div>
             {(recipe.imageUrl && !imageError) ? (
                 <div className={styles.recipeImage}>
-                    <img src={recipe.imageUrl} alt={recipe.title} onError={() => setImageError(true)} />
+                    <img 
+                        src={recipe.imageUrl} 
+                        alt={recipe.title} 
+                        onError={() => setImageError(true)} 
+                    />
                 </div>
             ) : (
                 <div className={styles.recipeImagePlaceholder}>

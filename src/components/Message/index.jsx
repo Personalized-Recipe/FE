@@ -5,7 +5,7 @@ import RecipeDetailMessage from './RecipeDetailMessage';
 
 function Message(props) {
     const { type } = props;
-
+    
     if (type === 'recipe-list') return <RecipeListMessage {...props} />;
     if (type === 'recipe-detail') return <RecipeDetailMessage {...props} />;
     return <TextMessage {...props} />;
