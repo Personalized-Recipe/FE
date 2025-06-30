@@ -1,14 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from "./Message.module.scss";
 
-function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }) {
+function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId, messageIndex }) {
     const [imageError, setImageError] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [expandedRecipes, setExpandedRecipes] = useState(new Set()); // 펼쳐진 레시피들을 추적
+    
+    // expandedRecipes 상태를 메시지별로 관리
+    const [expandedRecipes, setExpandedRecipes] = useState(() => {
+        try {
+            const storageKey = `expandedRecipes_${roomId}_${messageIndex}`;
+            const saved = localStorage.getItem(storageKey);
+            return saved ? new Set(JSON.parse(saved)) : new Set();
+        } catch (e) {
+            console.error("localStorage expandedRecipes 파싱 실패:", e);
+            return new Set();
+        }
+    });
+    
+    // expandedRecipes 상태가 변경될 때 localStorage에 저장
+    useEffect(() => {
+        if (roomId !== undefined && messageIndex !== undefined) {
+            try {
+                const storageKey = `expandedRecipes_${roomId}_${messageIndex}`;
+                localStorage.setItem(storageKey, JSON.stringify([...expandedRecipes]));
+            } catch (e) {
+                console.error("localStorage expandedRecipes 저장 실패:", e);
+            }
+        }
+    }, [expandedRecipes, roomId, messageIndex]);
     
     // 디버깅 로그 추가
-    console.log("Message 컴포넌트 렌더링:", { role, content, type, recipes, recipe });
+    console.log("Message 컴포넌트 렌더링:", { role, content, type, recipes, recipe, messageIndex });
     
     // type이 undefined인 경우 기본값 설정
     const messageType = type || 'text';
@@ -32,17 +55,24 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
         ));
     };
 
-    // 레시피 토글 함수
+    // 레시피 토글 함수 - 메시지별 고유 키 사용
     const toggleRecipe = (recipeTitle) => {
+        const recipeKey = `${messageIndex}-${recipeTitle}`;
         setExpandedRecipes(prev => {
             const newSet = new Set(prev);
-            if (newSet.has(recipeTitle)) {
-                newSet.delete(recipeTitle);
+            if (newSet.has(recipeKey)) {
+                newSet.delete(recipeKey);
             } else {
-                newSet.add(recipeTitle);
+                newSet.add(recipeKey);
             }
             return newSet;
         });
+    };
+
+    // 레시피가 확장되었는지 확인하는 함수
+    const isRecipeExpanded = (recipeTitle) => {
+        const recipeKey = `${messageIndex}-${recipeTitle}`;
+        return expandedRecipes.has(recipeKey);
     };
 
     // 레시피 리스트 메시지 (요리명 버튼들)
@@ -58,10 +88,10 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
             console.log("roomId:", roomId);
             console.log("onRecipeClick 함수:", typeof onRecipeClick);
             
-            // 토글 기능: 같은 레시피를 다시 클릭하면 숨김
+            // 토글 상태 변경
             toggleRecipe(recipe.title);
             
-            // 기존 onRecipeClick 함수는 hasDetailedInfo가 false인 경우에만 호출
+            // 상세 정보가 없는 경우에만 AI 요청
             if (!recipe.hasDetailedInfo && typeof onRecipeClick === 'function') {
                 onRecipeClick(roomId, recipe);
             }
@@ -74,68 +104,118 @@ function Message({ role, content, type, recipes, recipe, onRecipeClick, roomId }
                     <p>원하는 메뉴를 클릭하면 상세 레시피를 확인할 수 있습니다</p>
                 </div>
                 <div className={styles.recipeListBox}>
-                    {recipes.map((r, i) => (
-                        <div key={i} className={styles.recipeItem}>
-                            {/* 레시피 버튼 */}
-                            <button
-                                className={`${styles.recipeTitleBtn} ${expandedRecipes.has(r.title) ? styles.expanded : ''}`}
-                                onClick={() => handleRecipeButtonClick(r)}
-                            >
-                                <div className={styles.recipeBtnContent}>
-                                    {r.imageUrl && (
-                                        <div className={styles.recipeBtnImage}>
-                                            <img src={r.imageUrl} alt={r.title} />
-                                        </div>
-                                    )}
-                                    <span className={styles.recipeBtnTitle}>{r.title}</span>
-                                    <div className={styles.recipeBtnMeta}>
-                                        <span className={styles.recipeBtnCategory}>{r.category}</span>
-                                        <span className={styles.recipeBtnTime}>⏱️ {r.cookingTime}</span>
-                                        <span className={styles.recipeBtnDifficulty}>🔥 {r.difficulty}</span>
-                                    </div>
-                                    {/* 토글 상태 표시 */}
-                                    <span className={styles.toggleIcon}>
-                                        {expandedRecipes.has(r.title) ? '▼' : '▶'}
-                                    </span>
-                                </div>
-                            </button>
-                            
-                            {/* hasDetailedInfo가 true이고 펼쳐진 상태인 경우 상세 정보 표시 */}
-                            {r.hasDetailedInfo && expandedRecipes.has(r.title) && (
-                                <div className={styles.recipeDetailInline}>
-                                    <div className={styles.recipeDetailBox}>
-                                        <div className={styles.recipeHeader}>
-                                            <h3 className={styles.recipeTitle}>{r.title}</h3>
-                                            <div className={styles.recipeMeta}>
-                                                <span className={styles.recipeCategory}>{r.category}</span>
-                                                <span className={styles.recipeTime}>⏱️ {r.cookingTime}</span>
-                                                <span className={styles.recipeDifficulty}>난이도: {r.difficulty}</span>
-                                            </div>
-                                        </div>
-                                        {(r.imageUrl && !imageError) ? (
-                                            <div className={styles.recipeImage}>
-                                                <img 
-                                                    src={r.imageUrl} 
-                                                    alt={r.title}
-                                                    onError={() => setImageError(true)}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className={styles.recipeImagePlaceholder}>
-                                                <div className={styles.placeholderContent}>
-                                                    <span className={styles.placeholderIcon}>🍽️</span>
-                                                    <span className={styles.placeholderText}>레시피 이미지</span>
-                                                </div>
+                    {recipes.map((r, i) => {
+                        const isExpanded = isRecipeExpanded(r.title);
+                        
+                        return (
+                            <div key={i} className={styles.recipeItem}>
+                                {/* 레시피 버튼 */}
+                                <button
+                                    className={`${styles.recipeTitleBtn} ${isExpanded ? styles.expanded : ''}`}
+                                    onClick={() => handleRecipeButtonClick(r)}
+                                >
+                                    <div className={styles.recipeBtnContent}>
+                                        {r.imageUrl && (
+                                            <div className={styles.recipeBtnImage}>
+                                                <img src={r.imageUrl} alt={r.title} />
                                             </div>
                                         )}
-                                        <div className={styles.recipeDescription}>
-                                            {formatContent(r.description)}
+                                        <span className={styles.recipeBtnTitle}>{r.title}</span>
+                                        <div className={styles.recipeBtnMeta}>
+                                            <span className={styles.recipeBtnCategory}>{r.category}</span>
+                                            <span className={styles.recipeBtnTime}>⏱️ {r.cookingTime}</span>
+                                            <span className={styles.recipeBtnDifficulty}>🔥 {r.difficulty}</span>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                                    <span className={styles.toggleIcon}>
+                                        {isExpanded ? '▼' : '▶'}
+                                    </span>
+                                </button>
+                                
+                                {/* 토글된 상세 정보 표시 */}
+                                {isExpanded && r.description && r.description.length > 50 && (
+                                    <div className={styles.recipeDetailInline}>
+                                        <div className={styles.recipeDetailBox}>
+                                            <div className={styles.recipeHeader}>
+                                                <h3 className={styles.recipeTitle}>{r.title}</h3>
+                                                <div className={styles.recipeMeta}>
+                                                    <span className={styles.recipeCategory}>{r.category}</span>
+                                                    <span className={styles.recipeTime}>⏱️ {r.cookingTime}</span>
+                                                    <span className={styles.recipeDifficulty}>난이도: {r.difficulty}</span>
+                                                </div>
+                                            </div>
+                                            {(r.imageUrl && !imageError) ? (
+                                                <div className={styles.recipeImage}>
+                                                    <img 
+                                                        src={r.imageUrl} 
+                                                        alt={r.title}
+                                                        onError={() => setImageError(true)}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className={styles.recipeImagePlaceholder}>
+                                                    <div className={styles.placeholderContent}>
+                                                        <span className={styles.placeholderIcon}>🍽️</span>
+                                                        <span className={styles.placeholderText}>레시피 이미지</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className={styles.recipeDescription}>
+                                                {formatContent(r.description)}
+                                            </div>
+                                            {/* 저장 버튼 추가 */}
+                                            {r.recipeId && (
+                                                <div className={styles.recipeActions}>
+                                                    <button 
+                                                        className={styles.saveRecipeBtn}
+                                                        onClick={async () => {
+                                                            try {
+                                                                setSaving(true);
+                                                                
+                                                                // 인증 정보 가져오기
+                                                                const token = localStorage.getItem("jwt");
+                                                                const userId = localStorage.getItem("userId");
+                                                                
+                                                                if (!token || !userId) {
+                                                                    alert("로그인이 필요합니다.");
+                                                                    return;
+                                                                }
+                                                                
+                                                                const response = await axios.post(`/api/recipes/save/${userId}/${r.recipeId}`, {}, {
+                                                                    headers: {
+                                                                        'Authorization': `Bearer ${token}`,
+                                                                        'Content-Type': 'application/json'
+                                                                    }
+                                                                });
+                                                                
+                                                                if (response.status === 200) {
+                                                                    alert("레시피가 저장되었습니다!");
+                                                                } else {
+                                                                    alert("레시피 저장에 실패했습니다.");
+                                                                }
+                                                            } catch (error) {
+                                                                console.error("레시피 저장 중 오류:", error);
+                                                                if (error.response?.status === 409) {
+                                                                    alert("이미 저장된 레시피입니다.");
+                                                                } else {
+                                                                    alert("레시피 저장에 실패했습니다.");
+                                                                }
+                                                            } finally {
+                                                                setSaving(false);
+                                                            }
+                                                        }}
+                                                        disabled={saving}
+                                                    >
+                                                        {saving ? '💾 저장 중...' : '💾 저장하기'}
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         );

@@ -36,63 +36,98 @@
 }
 
 .recipeListBox {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
     margin: 10px 0;
+    max-width: 100%;
 }
 
 .recipeItem {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
+    min-width: 140px;
 }
 
 .recipeDetailInline {
-    margin-top: 10px;
+    margin-top: 8px;
     padding: 16px;
     background: #f8fafc;
     border-radius: 12px;
     border: 1px solid #e1f0ff;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .recipeTitleBtn {
     background: #f8fafc;
-    border-radius: 12px;
-    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
-    padding: 10px 16px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+    padding: 12px;
     font-size: 15px;
     font-weight: 500;
     color: #0070ff;
     border: 1px solid #e1f0ff;
     cursor: pointer;
     margin: 2px 0;
-    transition: box-shadow 0.2s, background 0.2s, color 0.2s;
-    min-width: 120px;
+    transition: all 0.2s ease;
+    min-width: 140px;
+    max-width: 180px;
+    height: 140px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .recipeTitleBtn:hover {
     background: #e1f0ff;
     color: #005bd1;
-    box-shadow: 0 4px 16px 0 rgba(0,112,255,0.08);
+    box-shadow: 0 4px 16px 0 rgba(0,112,255,0.12);
+    transform: translateY(-2px);
 }
 
 .recipeTitleBtn.expanded {
     background: #e1f0ff;
     color: #005bd1;
     border-color: #0070ff;
-    box-shadow: 0 4px 16px 0 rgba(0,112,255,0.12);
+    box-shadow: 0 4px 16px 0 rgba(0,112,255,0.16);
 }
 
 .toggleIcon {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 12px;
+    top: 6px;
+    right: 6px;
+    font-size: 10px;
     color: #0070ff;
     font-weight: bold;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.recipeTitleBtn.expanded .toggleIcon {
+    color: #005bd1;
+    background: rgba(225, 240, 255, 0.9);
 }
 
 .recipeBtnContent {
@@ -100,18 +135,24 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
+    padding-top: 8px;
 }
 
 .recipeBtnImage {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
     overflow: hidden;
+    flex-shrink: 0;
     
     img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        border-radius: 10px;
     }
 }
 
@@ -120,6 +161,14 @@
     font-weight: 600;
     text-align: center;
     line-height: 1.2;
+    color: #222;
+    margin: 0;
+    word-break: keep-all;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    max-height: 32px;
 }
 
 .recipeDetailBox {
@@ -129,6 +178,7 @@
     padding: 20px;
     margin: 10px 0;
     border: 1px solid #e1f0ff;
+    min-height: 120px;
 }
 
 .recipeHeader {
@@ -246,31 +296,38 @@
     flex-direction: column;
     gap: 2px;
     align-items: center;
-    margin-top: 4px;
+    width: 100%;
+    margin-top: auto;
 }
 
 .recipeBtnCategory {
-    font-size: 10px;
+    font-size: 9px;
     color: #0070ff;
     background: #e1f0ff;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 1px 4px;
+    border-radius: 3px;
     font-weight: 600;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .recipeBtnTime {
-    font-size: 10px;
+    font-size: 9px;
     color: #666;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .recipeBtnDifficulty {
-    font-size: 10px;
+    font-size: 9px;
     color: #ff6b35;
     background: #fff2ed;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 1px 4px;
+    border-radius: 3px;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 // 레시피 상세 메시지를 위한 별도 스타일
