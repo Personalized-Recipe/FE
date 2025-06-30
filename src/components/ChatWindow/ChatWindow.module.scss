@@ -18,7 +18,6 @@
     background: #ffffff;
     // border: #0070ff 1px solid;
     height: 50px;
-    width: 100%;
     display: flex;
     align-items: center;
     padding: 10px;
@@ -26,7 +25,7 @@
     border-bottom: 1px solid rgb(243, 243, 243);
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 5;
     font-size: 19px;
     font-weight: 600;
 }
