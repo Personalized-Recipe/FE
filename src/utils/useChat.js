@@ -14,15 +14,15 @@ export const useChat = () => {
   const [isLoadingRecipe, setIsLoadingRecipe] = useState(false);
 
   const [chatRooms, setChatRooms] = useState(() => {
-  try {
-    const userId = localStorage.getItem("userId");
-    const stored = localStorage.getItem(`chatRooms_${userId}`);
-    return stored ? JSON.parse(stored) : [];
-  } catch (e) {
-    console.error("localStorage chatRooms 파싱 실패:", e);
-    return []; // 오류 났을 땐 그냥 빈 배열로 시작
-  }
-});
+    try {
+      const userId = localStorage.getItem("userId");
+      const stored = localStorage.getItem(`chatRooms_${userId}`);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error("localStorage chatRooms 파싱 실패:", e);
+      return []; // 오류 났을 땐 그냥 빈 배열로 시작
+    }
+  });
 
   // messages 상태를 별도로 관리
   const [messages, setMessages] = useState([]);
@@ -46,12 +46,12 @@ export const useChat = () => {
       
       const { token, userId } = authInfo;
       
-      console.log("=== 토큰 디버깅 ===");
-      console.log("토큰 존재:", !!token);
-      console.log("토큰 길이:", token ? token.length : 0);
-      console.log("토큰 시작 부분:", token ? token.substring(0, 20) + "..." : "없음");
-      console.log("사용자 ID:", userId);
-      console.log("=== 토큰 디버깅 완료 ===");
+      // console.log("=== 토큰 디버깅 ===");
+      // console.log("토큰 존재:", !!token);
+      // console.log("토큰 길이:", token ? token.length : 0);
+      // console.log("토큰 시작 부분:", token ? token.substring(0, 20) + "..." : "없음");
+      // console.log("사용자 ID:", userId);
+      // console.log("=== 토큰 디버깅 완료 ===");
       
       if (!token || !userId) {
         console.error("JWT 토큰 또는 사용자 ID가 없습니다.");
@@ -98,9 +98,23 @@ export const useChat = () => {
             console.log("저장된 currentRoomId가 유효하지 않습니다. 첫 번째 채팅방을 선택합니다.");
             console.log("첫 번째 채팅방을 현재 채팅방으로 설정:", rooms[0].id);
             setCurrentRoomId(rooms[0].id);
+            
+            // 첫 번째 채팅방의 메시지도 가져오기
+            setTimeout(() => {
+              fetchChatMessages(rooms[0].id);
+            }, 100);
           } else {
             console.log("저장된 currentRoomId가 유효합니다:", currentRoomId);
+            // 유효한 채팅방이지만 메시지가 없으면 가져오기
+            if (!validCurrentRoom.messages || validCurrentRoom.messages.length === 0) {
+              setTimeout(() => {
+                fetchChatMessages(currentRoomId);
+              }, 100);
+            }
           }
+        } else {
+          console.log("채팅방이 없습니다. currentRoomId를 null로 설정합니다.");
+          setCurrentRoomId(null);
         }
         
         console.log("=== 채팅방 목록 가져오기 완료 ===");
@@ -134,8 +148,20 @@ export const useChat = () => {
             console.log("변환된 채팅방 목록:", rooms);
             setChatRooms(rooms);
             
-            if (rooms.length > 0 && !currentRoomId) {
-              setCurrentRoomId(rooms[0].id);
+            if (rooms.length > 0) {
+              const validCurrentRoom = rooms.find(room => room.id === currentRoomId);
+              if (!validCurrentRoom) {
+                setCurrentRoomId(rooms[0].id);
+                setTimeout(() => {
+                  fetchChatMessages(rooms[0].id);
+                }, 100);
+              } else if (!validCurrentRoom.messages || validCurrentRoom.messages.length === 0) {
+                setTimeout(() => {
+                  fetchChatMessages(currentRoomId);
+                }, 100);
+              }
+            } else {
+              setCurrentRoomId(null);
             }
           }
         }
@@ -207,52 +233,7 @@ export const useChat = () => {
         });
         console.log("=== 전체 응답 데이터 분석 완료 ===");
         
-        // 백엔드 응답을 프론트엔드 형식으로 변환
-        const messages = response.data.map((msg, index) => {
-          console.log(`=== 메시지 ${index + 1} 상세 분석 ===`);
-          console.log("원본 메시지:", msg);
-          console.log("메시지 타입:", typeof msg);
-          console.log("메시지 키들:", Object.keys(msg || {}));
-          console.log("type 필드:", msg.type);
-          console.log("role 필드:", msg.role);
-          console.log("recipes 필드:", msg.recipes);
-          console.log("recipe 필드:", msg.recipe);
-          console.log("message 필드:", msg.message);
-          console.log("content 필드:", msg.content);
-          console.log("=== 메시지 ${index + 1} 분석 완료 ===");
-          
-          // 백엔드에서 이미 파싱된 데이터를 그대로 사용
-          const messageObj = {
-            chatId: msg.chatId,
-            userId: msg.userId,
-            message: msg.message,
-            isUserMessage: msg.isUserMessage,
-            sessionId: msg.sessionId,
-            chatRoomId: msg.chatRoomId,
-            recipeId: msg.recipeId,
-            createdAt: msg.createdAt,
-            role: msg.role || (msg.isUserMessage ? 'user' : 'bot'),
-            type: msg.type || 'text'
-          };
-          
-          // 백엔드에서 파싱된 추가 데이터가 있으면 추가
-          if (msg.recipes) {
-            messageObj.recipes = msg.recipes;
-          }
-          
-          if (msg.recipe) {
-            messageObj.recipe = msg.recipe;
-          }
-          
-          // content 필드 설정 (message 필드를 content로도 사용)
-          if (msg.content) {
-            messageObj.content = msg.content;
-          } else {
-            messageObj.content = msg.message; // message 필드를 content로 사용
-          }
-          
-          return messageObj;
-        });
+        const messages = response.data.map(parseBackendMessage);
         
         console.log("변환된 메시지 목록:", messages);
         
@@ -284,26 +265,96 @@ export const useChat = () => {
     }
   };
 
-  // 컴포넌트 마운트 시 채팅방 목록 가져오기
+  // 컴포넌트 마운트 시 초기화
   useEffect(() => {
-    fetchChatRooms();
-  }, []);
+    const initializeChat = async () => {
+      console.log("=== 채팅 초기화 시작 ===");
+      
+      // 로그인 상태 확인
+      if (!isLoggedIn()) {
+        console.log("로그인되지 않았습니다. 초기화를 건너뜁니다.");
+        return;
+      }
+      
+      try {
+        // 1. 채팅방 목록 가져오기
+        await fetchChatRooms();
+        
+        // 2. 현재 채팅방이 있으면 메시지 가져오기
+        if (currentRoomId) {
+          console.log("현재 채팅방 메시지 가져오기:", currentRoomId);
+          await fetchChatMessages(currentRoomId);
+        }
+        
+        console.log("=== 채팅 초기화 완료 ===");
+      } catch (error) {
+        console.error("채팅 초기화 중 오류 발생:", error);
+      }
+    };
+    
+    initializeChat();
+  }, []); // 빈 의존성 배열로 한 번만 실행
 
+  // chatRooms 변경 시 localStorage 저장
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    if (userId) {
-      localStorage.setItem(`chatRooms_${userId}`, JSON.stringify(chatRooms));
+    if (userId && chatRooms.length > 0) {
+      try {
+        // 메모리 사용량을 줄이기 위해 필요한 정보만 저장
+        const roomsToStore = chatRooms.map(room => ({
+          id: room.id,
+          title: room.title,
+          createdAt: room.createdAt,
+          updatedAt: room.updatedAt,
+          isActive: room.isActive,
+          messageCount: room.messageCount,
+          // messages는 너무 클 수 있으므로 저장하지 않음
+        }));
+        
+        localStorage.setItem(`chatRooms_${userId}`, JSON.stringify(roomsToStore));
+        console.log("채팅방 목록 localStorage 저장 완료:", roomsToStore.length, "개");
+      } catch (e) {
+        console.error("채팅방 목록 localStorage 저장 실패:", e);
+        // localStorage 용량 부족 등의 경우 이전 데이터 삭제 후 재시도
+        try {
+          localStorage.removeItem(`chatRooms_${userId}`);
+          const roomsToStore = chatRooms.map(room => ({
+            id: room.id,
+            title: room.title,
+            createdAt: room.createdAt,
+            updatedAt: room.updatedAt,
+            isActive: room.isActive,
+            messageCount: room.messageCount,
+          }));
+          localStorage.setItem(`chatRooms_${userId}`, JSON.stringify(roomsToStore));
+          console.log("채팅방 목록 localStorage 재저장 완료");
+        } catch (retryError) {
+          console.error("채팅방 목록 localStorage 재저장도 실패:", retryError);
+        }
+      }
     }
   }, [chatRooms]);
 
-  // currentRoomId 변경 시 localStorage 업데이트
+  // currentRoomId 변경 시 localStorage 업데이트 및 메시지 로드
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
-      if (currentRoomId) {
-        localStorage.setItem(`currentRoomId_${userId}`, currentRoomId);
-      } else {
-        localStorage.removeItem(`currentRoomId_${userId}`);
+      try {
+        if (currentRoomId) {
+          localStorage.setItem(`currentRoomId_${userId}`, currentRoomId);
+          console.log("현재 채팅방 ID localStorage 저장:", currentRoomId);
+          
+          // 현재 채팅방의 메시지가 없으면 가져오기
+          const currentRoom = chatRooms.find(room => room.id === currentRoomId);
+          if (currentRoom && (!currentRoom.messages || currentRoom.messages.length === 0)) {
+            console.log("현재 채팅방 메시지가 없어서 가져오기:", currentRoomId);
+            fetchChatMessages(currentRoomId);
+          }
+        } else {
+          localStorage.removeItem(`currentRoomId_${userId}`);
+        }
+      } catch (e) {
+        console.error("currentRoomId localStorage 저장 실패:", e);
       }
     }
   }, [currentRoomId]);
@@ -319,7 +370,6 @@ export const useChat = () => {
     
     const newMessages = currentRoom ? currentRoom.messages : [];
     console.log("새로운 messages:", newMessages.length, "개 메시지");
-    console.log("messages 내용:", newMessages);
     
     setMessages(newMessages);
   }, [currentRoomId, chatRooms]);
@@ -597,46 +647,22 @@ export const useChat = () => {
     return recipes;
   };
 
-  // 메시지 타입 자동 판별 및 파싱 함수
-  const parseMessageType = (msg) => {
-    // 이미 type이 있으면 그대로 사용
-    if (msg.type) return msg;
-
-    // 레시피 상세로 추정되는 경우
-    if (
-      msg.message &&
-      (msg.message.includes('필요한 재료와 양:') || msg.message.includes('조리 방법:'))
-    ) {
-      return {
-        ...msg,
-        type: 'recipe-detail',
-        recipe: {
-          title: msg.message.split('\n')[0] || '레시피',
-          description: msg.message,
-          category: '기타',
-          imageUrl: null,
-          cookingTime: '정보 없음',
-          difficulty: '정보 없음',
-        },
-      };
-    }
-
-    // 메뉴 추천으로 추정되는 경우
-    if (
-      msg.message &&
-      (msg.message.includes('- ') || /\d+\. /.test(msg.message))
-    ) {
-      return {
-        ...msg,
-        type: 'recipe-list',
-        recipes: parseMenuRecommendation(msg.message),
-      };
-    }
-
-    // 그 외는 일반 텍스트
+  // 메시지 파싱 함수: 백엔드에서 내려주는 구조를 최대한 그대로 사용
+  const parseBackendMessage = (msg) => {
     return {
-      ...msg,
-      type: 'text',
+      chatId: msg.chatId,
+      userId: msg.userId,
+      message: msg.message,
+      isUserMessage: msg.isUserMessage,
+      sessionId: msg.sessionId,
+      chatRoomId: msg.chatRoomId,
+      recipeId: msg.recipeId,
+      createdAt: msg.createdAt,
+      role: msg.role || (msg.isUserMessage ? 'user' : 'bot'),
+      type: msg.type || 'text',
+      recipes: msg.recipes,
+      recipe: msg.recipe,
+      content: msg.content || msg.message
     };
   };
 
@@ -719,13 +745,16 @@ export const useChat = () => {
       console.log("응답 상태:", response.status);
       console.log("응답 데이터:", response.data);
       
-      // 백엔드 DB 저장이 완료될 시간을 주기 위해 약간의 지연
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // 백엔드 응답 후에만 채팅방을 새로 조회하여 봇 메시지 추가
-      console.log("채팅방 메시지 다시 가져오기 시작...");
-      await fetchChatMessages(roomId);
-      console.log("채팅방 메시지 다시 가져오기 완료");
+      // POST 응답도 parseBackendMessage로 통일
+      const botMsg = parseBackendMessage(response.data);
+      // 유저 메시지와 봇 메시지를 messages 배열에 추가
+      setChatRooms(prevRooms => prevRooms.map(room => {
+        if (room.id !== roomId) return room;
+        return {
+          ...room,
+          messages: [...(room.messages || []), botMsg]
+        };
+      }));
       
       // 로딩 상태 해제
       setIsLoadingRecipe(false);
@@ -862,6 +891,9 @@ export const useChat = () => {
           return updatedRooms;
         });
         
+        // 로딩 상태 즉시 해제
+        setIsLoadingRecipe(false);
+        
       } else {
         console.log("AI 요청으로 상세 레시피 생성:", recipe.title);
         
@@ -895,10 +927,10 @@ export const useChat = () => {
         console.log("채팅방 메시지 다시 가져오기 시작...");
         await fetchChatMessages(roomId);
         console.log("채팅방 메시지 다시 가져오기 완료");
+        
+        // 로딩 상태 해제
+        setIsLoadingRecipe(false);
       }
-      
-      // 로딩 상태 해제
-      setIsLoadingRecipe(false);
       
     } catch (error) {
       console.error("=== 레시피 상세 정보 요청 실패 ===");
@@ -1005,6 +1037,14 @@ export const useChat = () => {
       }
     }
   };
+
+  // 컴포넌트 언마운트 시 정리 작업
+  useEffect(() => {
+    return () => {
+      console.log("useChat 훅 정리 작업 실행");
+      // 필요한 경우 여기에 정리 작업 추가
+    };
+  }, []);
 
   return {
     messages,

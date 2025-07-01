@@ -3,6 +3,17 @@ import styles from "./Message.module.scss";
 import RecipeDetailMessage from './RecipeDetailMessage';
 
 function RecipeListMessage({role, recipes, roomId, onRecipeClick, messageIndex }) {
+        console.log("🧪 전체 recipes 디버깅 시작");
+        recipes.forEach((r, i) => {
+        console.log(`레시피 ${i}번`, {
+            title: r.title,
+            recipeId: r.recipeId,
+            description: r.description,
+            imageUrl: r.imageUrl,
+            hasDetailedInfo: r.hasDetailedInfo,
+        });
+        });
+
     // messageIndex + recipeTitle 조합을 키로 사용해 토글 상태 관리
     const storageKey = `expandedRecipes_${roomId}_${messageIndex}`;
     const [expandedKey, setExpandedKey] = useState(() => {
@@ -13,6 +24,8 @@ function RecipeListMessage({role, recipes, roomId, onRecipeClick, messageIndex }
         }
     });
 
+    const [activeRecipe, setActiveRecipe] = useState(null);
+
     useEffect(() => {
         if (expandedKey) {
             localStorage.setItem(storageKey, expandedKey);
@@ -20,6 +33,20 @@ function RecipeListMessage({role, recipes, roomId, onRecipeClick, messageIndex }
             localStorage.removeItem(storageKey);
         }
     }, [expandedKey, storageKey]);
+
+    useEffect(() => {
+        const recipe = recipes.find(r => `${messageIndex}-${r.title}` === expandedKey);
+        setActiveRecipe(recipe || null);
+    }, [expandedKey, recipes, messageIndex]);
+
+    useEffect(() => {
+    if (activeRecipe) {
+        console.log("🟢 활성 레시피 변경됨:", activeRecipe);
+    } else {
+        console.log("🟡 레시피 닫힘 (activeRecipe = null)");
+    }
+}, [activeRecipe]);
+
 
     const toggleRecipe = (recipe) => {
         const recipeKey = `${messageIndex}-${recipe.title}`;
@@ -37,12 +64,6 @@ function RecipeListMessage({role, recipes, roomId, onRecipeClick, messageIndex }
         setExpandedKey(recipeKey);
     };
     
-    const selectedRecipe = recipes.find(r => {
-        const key = `${messageIndex}-${r.title}`;
-        console.log("비교 중", key, expandedKey);
-        return key === expandedKey;
-    });
-
     return (
     <>
         <div className={styles.recipeListBox}>
@@ -82,11 +103,11 @@ function RecipeListMessage({role, recipes, roomId, onRecipeClick, messageIndex }
                 </>
             )}
 
-            {selectedRecipe && (
+            {activeRecipe && (
                <RecipeDetailMessage 
-                    key={expandedKey}
+                    key={activeRecipe.recipeId}
                     role={role}
-                    recipe={selectedRecipe}
+                    recipe={activeRecipe}
                />
             )}
         </div>

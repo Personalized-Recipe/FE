@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import styles from "./ChatWindow.module.scss";
-// import Message from '../Message/Message';
 import Message from '../Message';
 import { useChat } from '../../utils/useChat';
 
@@ -8,13 +7,13 @@ function ChatWindow({messages, chatTitle, isLoadingRecipe, currentRoomId, showIn
     const messagesEndRef = useRef(null);
     const { sendRecipeDetail } = useChat();
 
-    // 디버깅 로그 추가
-    console.log("ChatWindow 렌더링:", { 
-        messagesCount: messages.length, 
-        isLoadingRecipe, 
-        currentRoomId,
-        showIngredient
-    });
+    // // 디버깅 로그 추가
+    // console.log("ChatWindow 렌더링:", { 
+    //     messagesCount: messages.length, 
+    //     isLoadingRecipe, 
+    //     currentRoomId,
+    //     showIngredient
+    // });
 
     // 로딩 상태 변경 감지
     useEffect(() => {

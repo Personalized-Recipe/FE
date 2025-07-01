@@ -62,6 +62,8 @@ function Main() {
     const handleSend = () => {
         let roomId = currentRoomId;
         let inputValue = input.trim();
+
+        if (!inputValue) return;
         // 채팅방이 없거나 선택된 방이 없으면 새로 생성 (입력값을 제목으로)
         if ((!chatRooms.length || !roomId) && inputValue) {
             const newRoom = createChatRoom(inputValue);
